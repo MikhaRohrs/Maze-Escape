@@ -1,27 +1,14 @@
-#include <SFML/Graphics.hpp>
+#include "engine.h"
+#include "game.h"
+#include "scenes/scene_menu.h"
 
-using namespace sf;
 using namespace std;
 
-int main()
-{
-  RenderWindow window(VideoMode(200, 200), "SFML works!");
-  CircleShape shape(100.f);
-  shape.setFillColor(sf::Color::Green);
+MenuScene menu;
+Level1Scene level1;
+Level2Scene level2;
+Level3Scene level3;
 
-  while (window.isOpen())
-  {
-      Event event{};
-      while (window.pollEvent(event))
-	  {
-      if (event.type == sf::Event::Closed)
-	  {
-        window.close();
-      }
-    }
-    window.clear();
-    window.draw(shape);
-    window.display();
-  }
-  return 0;
+int main() {
+    Engine::Start(1280, 720, "Platformer", &menu);
 }
