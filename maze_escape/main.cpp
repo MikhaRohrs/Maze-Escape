@@ -10,5 +10,5 @@ Level2Scene level2;
 Level3Scene level3;
 
 int main() {
-    Engine::Start(1280, 720, "Platformer", &menu);
+    Engine::Start(GAME_WIDTH[CURRENT_RES], GAME_HEIGHT[CURRENT_RES], "Maze Escape", &menu);
 }

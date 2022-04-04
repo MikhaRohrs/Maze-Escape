@@ -10,9 +10,10 @@ using namespace sf;
 void MenuScene::Load() {
   cout << "Menu Load \n";
   {
-    auto txt = makeEntity();
-    auto t = txt->addComponent<TextComponent>(
-        "Platformer\nPress Space to Start");
+    /*auto txt = makeEntity();
+    auto t = txt->addComponent<TextComponent>("Maze Escape\n\nStart\nOptions\nExit");*/
+  	auto titleText = makeEntity();
+  	auto title = titleText->addComponent<TextComponent>("Maze Escape");
   }
   setLoaded(true);
 }

@@ -10,3 +10,7 @@ extern MenuScene menu;
 extern Level1Scene level1;
 extern Level2Scene level2;
 extern Level3Scene level3;
+
+constexpr uint16_t GAME_WIDTH[4] = { 160, 640, 1280, 1920 };
+constexpr uint16_t GAME_HEIGHT[4] = { 192, 480, 720, 1080 };
+constexpr int CURRENT_RES = 2;
