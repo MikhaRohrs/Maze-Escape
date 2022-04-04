@@ -63,7 +63,7 @@ void LevelSystem::loadLevelFile(const std::string& path, float tileSize) {
     }
     ++widthCheck;
   }
-
+  h++;
   if (temp_tiles.size() != (w * h)) {
     throw string("Can't parse level file") + path;
   }

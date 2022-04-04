@@ -32,7 +32,7 @@ void Loading_render() {
   // cout << "Eng: Loading Screen Render\n";
   static CircleShape octagon(80, 8);
   octagon.setOrigin(Vector2f(80, 80));
-  octagon.setRotation(loadingspinner);
+  octagon.setRotation(sf::degrees(loadingspinner));
   octagon.setPosition(Vcast<float>(Engine::getWindowSize()) * .5f);
   octagon.setFillColor(Color(255,255,255,min(255.f,40.f*loadingTime)));
   static Text t("Loading", *Resources::get<sf::Font>("RobotoMono-Regular.ttf"));
@@ -132,8 +132,8 @@ void Engine::ChangeScene(Scene* s) {
   if (!s->isLoaded()) {
     cout << "Eng: Entering Loading Screen\n";
     loadingTime =0;
-    _activeScene->LoadAsync();
-    //_activeScene->Load();
+    //_activeScene->LoadAsync();
+    _activeScene->Load();
     loading = true;
   }
 }

@@ -49,7 +49,7 @@ target_link_libraries(ecm PRIVATE maths)
 
 ## Engine lib
 file(GLOB_RECURSE RESOURCE_FILES "res/*.*")
-file(GLOB_RECURSE SOURCE_FILES engine/*.cpp engine/*.h)
+file(GLOB_RECURSE SOURCE_FILES lib/engine/*.cpp lib/engine/*.h)
 add_library(engine STATIC ${SOURCE_FILES} ${RESOURCE_FILES})
 target_include_directories(engine INTERFACE "${CMAKE_SOURCE_DIR}/lib/engine/" PUBLIC SYSTEM ${B2D_INCS} )
 target_link_libraries(engine tile_level_loader maths ecm Box2D sfml-graphics sfml-audio)
@@ -75,7 +75,7 @@ add_executable(MAZE_ESCAPE ${SOURCES} ${RESOURCE_FILES})
 source_group("components" FILES ${CMPNTS})
 source_group("resources" FILES ${RESOURCE_FILES})
 target_include_directories(MAZE_ESCAPE SYSTEM PRIVATE ${SFML_INCS} ${B2D_INCS})
-target_link_libraries(MAZE_ESCAPE sfml-graphics Box2D tile_level_loader ecm maths engine )
+target_link_libraries(MAZE_ESCAPE engine)
 set(EXECUTABLES ${EXECUTABLES} MAZE_ESCAPE)
 
 add_dependencies(MAZE_ESCAPE copy_resources)
