@@ -18,3 +18,13 @@ void TextComponent::SetText(const std::string& str) {
   _string = str;
   _text.setString(_string);
 }
+
+// Get the text internal object of a text component. This is chosen over having functions for standard text modification operations for text components
+// (Such as .move(), .setPosition(), .setFillColor() ) as this function concatenates all this into two function calls: one for the text getter
+// and one for the sfml function.
+sf::Text& TextComponent::GetTextObject()
+{
+	return _text;
+}
+
+
