@@ -1,7 +1,7 @@
 #include "scene_level1.h"
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_sprite.h"
-#include "../components/cmp_text.h"
+#include "../components/cmp_timer.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <iostream>
@@ -12,7 +12,7 @@ using namespace sf;
 
 static shared_ptr<Entity> player;
 float timer = 15.0f;
-shared_ptr<TextComponent> text;
+shared_ptr<TimerComponent> timerText;
 
 void Level1Scene::Load() {
   cout << " Scene 1 Load" << endl;
@@ -34,16 +34,15 @@ void Level1Scene::Load() {
   }
     // Create timer text
     {
-    auto timerText = makeEntity();
-    text = timerText->addComponent<TextComponent>();
+    auto t = makeEntity();
+    timerText = t->addComponent<TimerComponent>(30.f);
+    timerText->GetTextObject().setPosition({ 5, 0 });
 
-    text->GetTextObject().setPosition({ 5, 0 });
+    timerText->GetTextObject().setFillColor(Color::Black);
+    timerText->GetTextObject().setOutlineColor(Color::White);
 
-    text->GetTextObject().setFillColor(Color::Black);
-    text->GetTextObject().setOutlineColor(Color::White);
-
-    text->GetTextObject().setOutlineThickness(1);
-    text->GetTextObject().setCharacterSize(24);
+    timerText->GetTextObject().setOutlineThickness(2);
+    timerText->GetTextObject().setCharacterSize(25);
     }
 
   // Add physics colliders to level tiles.
@@ -74,24 +73,6 @@ void Level1Scene::UnLoad() {
 
 void Level1Scene::Update(const double& dt)
 {
-    // Decrement timer by delta time.
-    timer -= dt;
-
-    // If time is under 11 seconds (In this case, it is treated as true starting from 10 seconds remaining on the visible, in-game clock), make the timer flash
-    // red to indicate that the player is running out of time.
-    if(timer <= 11)
-    {
-        bool evenNumber = (static_cast<int>(timer) % 2 == 0) ? true : false;
-        if (evenNumber) { text->GetTextObject().setFillColor(Color::Red); }
-        else { text->GetTextObject().setFillColor(Color::Black); }
-    }
-
-    // Cosmetic change where the text is shifted very slightly to the right when it reaches single digit numbers (As the number text is left-aligned).
-    if(timer <= 10){ text->GetTextObject().setPosition(Vector2f(14, 0)); }
-
-    // Each frame update the timer text to show the remaining time, casted to an integer without rounding.
-    text->SetText(std::to_string(static_cast<int>(timer)));
-
   if (ls::getTileAt(player->getPosition()) == ls::END) {
     Engine::ChangeScene((Scene*)&level2);
   }
