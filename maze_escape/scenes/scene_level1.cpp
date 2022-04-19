@@ -99,6 +99,6 @@ void Level1Scene::Update(const double& dt)
 }
 
 void Level1Scene::Render() {
-  ls::render(Engine::GetWindow());
+  ls::render(Engine::GetWindow(), player->getPosition());
   Scene::Render();
 }

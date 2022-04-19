@@ -171,9 +171,18 @@ void LevelSystem::buildSprites(bool optimise) {
        << " Not Empty, using: " << _sprites.size() << " Sprites\n";
 }
 
-void LevelSystem::render(RenderWindow& window) {
-  for (auto& t : _sprites) {
-    window.draw(*t);
+
+void LevelSystem::render(sf::RenderWindow& window, Vector2f playerPos)
+{
+  for (auto& t : _sprites) 
+  {
+      // Check if each tile is at least 150 units away from the player. If so, it will be rendered.
+      Vector2f distance = (t->getPosition() - playerPos);
+      distance.x = abs(distance.x); distance.y = abs(distance.y);
+    if(distance.length() <= 150)
+    {
+        window.draw(*t);
+    }
   }
 }
 

@@ -97,6 +97,6 @@ void Level2Scene::Update(const double& dt) {
 }
 
 void Level2Scene::Render() {
-  ls::render(Engine::GetWindow());
+  //ls::render(Engine::GetWindow());
   Scene::Render();
 }
