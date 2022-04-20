@@ -46,4 +46,6 @@ sf::Text& TimerComponent::GetTextObject()
     return _text;
 }
 
+float TimerComponent::GetCurrentTime() { return _currentTime; }
+
 

@@ -35,7 +35,7 @@ void Level1Scene::Load() {
     // Create timer text
     {
     auto t = makeEntity();
-    timerText = t->addComponent<TimerComponent>(30.f);
+    timerText = t->addComponent<TimerComponent>(5.f);
     timerText->GetTextObject().setPosition({ 5, 0 });
 
     timerText->GetTextObject().setFillColor(Color::Black);
@@ -76,6 +76,7 @@ void Level1Scene::Update(const double& dt)
   if (ls::getTileAt(player->getPosition()) == ls::END) {
     Engine::ChangeScene((Scene*)&level2);
   }
+  else if (timerText->GetCurrentTime() <= 0) { Engine::ChangeScene((Scene*)&loseGame); } // <-- todo: investigate nullptr error from scene change
   Scene::Update(dt);
 }
 
