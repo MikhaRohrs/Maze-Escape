@@ -15,6 +15,10 @@ public:
 
   void SetText(const std::string& str);
 
+  void setPosition(sf::Vector2f position);
+
+  void setOrigin(sf::Vector2f origin);
+
 protected:
   std::shared_ptr<sf::Font> _font;
   std::string _string;
