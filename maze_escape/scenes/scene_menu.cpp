@@ -31,16 +31,10 @@ void MenuScene::Load()
     options[2]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.32f));
 
     auto startText = options[0]->addComponent<TextComponent>("Start");
-    startText->setPosition(options[0]->getPosition());
-    startText->setOrigin(options[0]->getPosition() / 2.0f);
     
     auto leaderBoardText = options[1]->addComponent<TextComponent>("Leaderboard");
-    leaderBoardText->setPosition(options[1]->getPosition());
-    leaderBoardText->setOrigin(options[1]->getPosition() / 2.0f);
 
     auto exitText = options[2]->addComponent<TextComponent>("Exit");
-    exitText->setPosition(options[2]->getPosition());
-    exitText->setOrigin(options[2]->getPosition() / 2.0f);
   }
   setLoaded(true);
 }

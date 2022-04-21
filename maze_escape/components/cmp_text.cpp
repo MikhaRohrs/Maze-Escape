@@ -3,7 +3,10 @@
 #include <system_renderer.h>
 #include <system_resources.h>
 
-void TextComponent::update(double dt) {}
+void TextComponent::update(double dt)
+{
+    _text.setPosition(_parent->getPosition());
+}
 
 void TextComponent::render() { Renderer::queue(&_text); }
 
