@@ -90,6 +90,6 @@ void Level3Scene::Update(const double& dt) {
 }
 
 void Level3Scene::Render() {
-  ls::render(Engine::GetWindow());
+  //ls::render(Engine::GetWindow());
   Scene::Render();
 }

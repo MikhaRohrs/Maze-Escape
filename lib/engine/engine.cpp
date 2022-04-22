@@ -158,7 +158,7 @@ void Engine::ChangeScene(Scene* s) {
     cout << "Eng: Entering Loading Screen\n";
     loadingTime =0;
     _activeScene->LoadAsync();
-    //_activeScene->LoadSync(); <-- USE THIS WHEN DEBUGGING SCENE ERRORS!
+    //_activeScene->Load(); //<-- USE THIS WHEN DEBUGGING SCENE ERRORS!
     loading = true;
   }
 }

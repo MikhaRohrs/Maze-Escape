@@ -1,6 +1,7 @@
 #include "scene_level1.h"
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_sprite.h"
+#include "../components/cmp_timer.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <iostream>
@@ -10,25 +11,39 @@ using namespace std;
 using namespace sf;
 
 static shared_ptr<Entity> player;
+shared_ptr<TimerComponent> timerText;
+static shared_ptr<Entity> timer;
 
 void Level1Scene::Load() {
   cout << " Scene 1 Load" << endl;
-  ls::loadLevelFile("res/levels/level_1.txt", 40.0f);
+  ls::loadLevelFile("res/levels/testLevel.txt", 40.0f);
 
   auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
   ls::setOffset(Vector2f(0, ho));
 
   // Create player
   {
-    player = makeEntity();
-    player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-    auto s = player->addComponent<ShapeComponent>();
-    s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
-    s->getShape().setFillColor(Color::Magenta);
-    s->getShape().setOrigin(Vector2f(10.f, 15.f));
+      player = makeEntity();
+      player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+      auto s = player->addComponent<ShapeComponent>();
+      s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
+      s->getShape().setFillColor(Color::Magenta);
+      s->getShape().setOrigin(Vector2f(10.f, 15.f));
 
-    player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+      player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
   }
+    // Create timer text
+    {
+    timer = makeEntity();
+    timerText = timer->addComponent<TimerComponent>();
+    timerText->GetTextObject().setPosition({ 5, 0 });
+
+    timerText->GetTextObject().setFillColor(Color::Black);
+    timerText->GetTextObject().setOutlineColor(Color::White);
+
+    timerText->GetTextObject().setOutlineThickness(2);
+    timerText->GetTextObject().setCharacterSize(25);
+    }
 
   // Add physics colliders to level tiles.
   {
@@ -52,19 +67,22 @@ void Level1Scene::Load() {
 void Level1Scene::UnLoad() {
   cout << "Scene 1 Unload" << endl;
   player.reset();
+  timer.reset();
+  timerText.reset();
   ls::unload();
   Scene::UnLoad();
 }
 
-void Level1Scene::Update(const double& dt) {
-
+void Level1Scene::Update(const double& dt)
+{
   if (ls::getTileAt(player->getPosition()) == ls::END) {
     Engine::ChangeScene((Scene*)&level2);
   }
+  else if (timerText->GetCurrentTime() <= 0) { Engine::ChangeScene((Scene*)&loseGame); } // <-- todo: investigate nullptr error from scene change
   Scene::Update(dt);
 }
 
 void Level1Scene::Render() {
-  ls::render(Engine::GetWindow());
+  ls::render(Engine::GetWindow(), player->getPosition());
   Scene::Render();
 }
