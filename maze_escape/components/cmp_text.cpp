@@ -22,12 +22,7 @@ void TextComponent::SetText(const std::string& str)
   _text.setString(_string);
 }
 
-void TextComponent::setPosition(sf::Vector2f position)
+void TextComponent::ChangeColor(sf::Color color)
 {
-    _text.setPosition(position);
-}
-
-void TextComponent::setOrigin(sf::Vector2f origin)
-{
-    _text.setOrigin(origin);
+    _text.setFillColor(color);
 }
