@@ -74,6 +74,7 @@ void MenuScene::Update(const double& dt)
 
 	if (Keyboard::isKeyPressed(Keyboard::Space)) 
 	{
+		for (int i = 0; i < 4; i++) { texts[i].reset(); options[i].reset(); }
 		switch (selectedOption)
 		{
 		case 0: // Start
