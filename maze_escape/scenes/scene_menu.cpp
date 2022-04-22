@@ -26,3 +26,8 @@ void MenuScene::Update(const double& dt) {
 
   Scene::Update(dt);
 }
+
+void MenuScene::UnLoad()
+{
+    Scene::UnLoad();
+}

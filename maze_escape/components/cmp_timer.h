@@ -6,7 +6,7 @@
 class TimerComponent : public Component {
 public:
 	TimerComponent() = delete;
-	TimerComponent(Entity* p, const float startTime);
+	explicit TimerComponent(Entity* p);
 
 	void update(double dt) override;
 	void render() override;
@@ -19,6 +19,6 @@ public:
 
 protected:
 	float _currentTime;
-	sf::Text _text;
+	std::shared_ptr<sf::Text> _text;
 	std::shared_ptr<sf::Font> _font;
 };

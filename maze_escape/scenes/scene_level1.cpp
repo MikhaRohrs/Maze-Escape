@@ -11,8 +11,8 @@ using namespace std;
 using namespace sf;
 
 static shared_ptr<Entity> player;
-float timer = 15.0f;
 shared_ptr<TimerComponent> timerText;
+static shared_ptr<Entity> timer;
 
 void Level1Scene::Load() {
   cout << " Scene 1 Load" << endl;
@@ -34,8 +34,8 @@ void Level1Scene::Load() {
   }
     // Create timer text
     {
-    auto t = makeEntity();
-    timerText = t->addComponent<TimerComponent>(5.f);
+    timer = makeEntity();
+    timerText = timer->addComponent<TimerComponent>();
     timerText->GetTextObject().setPosition({ 5, 0 });
 
     timerText->GetTextObject().setFillColor(Color::Black);
@@ -67,6 +67,8 @@ void Level1Scene::Load() {
 void Level1Scene::UnLoad() {
   cout << "Scene 1 Unload" << endl;
   player.reset();
+  timer.reset();
+  timerText.reset();
   ls::unload();
   Scene::UnLoad();
 }
