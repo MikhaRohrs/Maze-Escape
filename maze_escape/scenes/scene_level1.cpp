@@ -2,6 +2,7 @@
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_sprite.h"
 #include "../components/cmp_timer.h"
+#include "../components/cmp_weapon.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <iostream>
@@ -77,6 +78,10 @@ void Level1Scene::Update(const double& dt)
 {
   if (ls::getTileAt(player->getPosition()) == ls::END) {
     Engine::ChangeScene((Scene*)&level2);
+  }
+  else if(ls::getTileAt(player->getPosition()) == ls::WEAPON)
+  {
+      auto weapon = player->addComponent<PlayerWeaponComponent>();
   }
   else if (timerText->GetCurrentTime() <= 0) { Engine::ChangeScene((Scene*)&loseGame); } // <-- todo: investigate nullptr error from scene change
   Scene::Update(dt);
