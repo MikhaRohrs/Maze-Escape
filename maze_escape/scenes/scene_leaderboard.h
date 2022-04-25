@@ -1,8 +1,8 @@
 #pragma once
 
-#include "engine.h"
+#include "scene_menu.h"
 
-class LeaderBoard : public Scene
+class LeaderBoard : public MenuScene
 {
 public:
 	LeaderBoard() = default;

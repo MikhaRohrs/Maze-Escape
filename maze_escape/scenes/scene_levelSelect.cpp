@@ -60,16 +60,14 @@ void LevelSelect::Update(const double& dt)
 	}
 	if (Keyboard::isKeyPressed(CONTROLS[4]))
 	{
+		options.clear();
+		texts.clear();
 		switch (selectedOption)
 		{
 		case 0: // Level 1
-			options.clear();
-			texts.clear();
 			Engine::ChangeScene(&level1);
 			break;
 		case 1: // Main menu
-			options.clear();
-			texts.clear();
 			Engine::ChangeScene(&menu);
 			break;
 		default:

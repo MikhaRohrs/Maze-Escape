@@ -62,21 +62,17 @@ void MenuScene::Update(const double& dt)
 	}
 	if (Keyboard::isKeyPressed(CONTROLS[4])) 
 	{
+		options.clear();
+		texts.clear();
 		switch (selectedOption)
 		{
 		case 0: // Level select
-			options.clear();
-			texts.clear();
 			Engine::ChangeScene(&levelSelect);
 			break;
 		case 1: // Leaderboard
-			options.clear();
-			texts.clear();
 			Engine::ChangeScene(&leaderBoard);
 			break;
 		case 2: // Options
-			options.clear();
-			texts.clear();
 			Engine::ChangeScene(&optionScene);
 			break;
 		case 3: // Exit

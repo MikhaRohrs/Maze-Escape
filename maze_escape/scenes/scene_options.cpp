@@ -20,7 +20,7 @@ void Options::Load()
 		selectedOption = 0;
 
 		const auto title = makeEntity();
-		auto titleText = title->addComponent<TextComponent>("Select Maze");
+		auto titleText = title->addComponent<TextComponent>("Options");
 
 		for (int i = 0; i < numOfOptions; i++)
 		{
@@ -62,6 +62,8 @@ void Options::Update(const double& dt)
 	}
 	if (Keyboard::isKeyPressed(CONTROLS[4]))
 	{
+		options.clear();
+		texts.clear();
 		switch (selectedOption)
 		{
 		case 0: // Screen resolution
@@ -71,8 +73,6 @@ void Options::Update(const double& dt)
 		case 2: // Toggle sound
 			break;
 		case 3: // Main menu
-			options.clear();
-			texts.clear();
 			Engine::ChangeScene(&menu);
 			break;
 		default:
