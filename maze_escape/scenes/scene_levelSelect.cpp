@@ -5,8 +5,6 @@
 #include "SFML/Window/Event.hpp"
 #include <SFML/Window/Keyboard.hpp>
 #include <iostream>
-#include <chrono>
-#include <thread>
 
 using namespace std;
 using namespace sf;
@@ -39,9 +37,9 @@ void LevelSelect::Load()
 
 void LevelSelect::Update(const double& dt)
 {
-	this_thread::sleep_for(chrono::milliseconds(100));
-	if (Keyboard::isKeyPressed(CONTROLS[0]))
+	if (Keyboard::isKeyPressed(CONTROLS[0]) && coolDown <= 0)
 	{
+		coolDown = 0.2f;
 		if (selectedOption - 1 >= 0)
 		{
 			texts[selectedOption]->ChangeColor(grey);
@@ -49,8 +47,9 @@ void LevelSelect::Update(const double& dt)
 			texts[selectedOption]->ChangeColor(Color::White);
 		}
 	}
-	if (Keyboard::isKeyPressed(CONTROLS[1]))
+	if (Keyboard::isKeyPressed(CONTROLS[1]) && coolDown <= 0)
 	{
+		coolDown = 0.2f;
 		if (selectedOption + 1 < options.size())
 		{
 			texts[selectedOption]->ChangeColor(grey);
@@ -58,8 +57,9 @@ void LevelSelect::Update(const double& dt)
 			texts[selectedOption]->ChangeColor(Color::White);
 		}
 	}
-	if (Keyboard::isKeyPressed(CONTROLS[4]))
+	if (Keyboard::isKeyPressed(CONTROLS[4]) && coolDown <= 0)
 	{
+		coolDown = 0.2f;
 		options.clear();
 		texts.clear();
 		switch (selectedOption)

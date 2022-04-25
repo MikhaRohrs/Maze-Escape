@@ -5,15 +5,13 @@
 #include "SFML/Window/Event.hpp"
 #include <SFML/Window/Keyboard.hpp>
 #include <iostream>
-#include <chrono>
-#include <thread>
 
 using namespace std;
 using namespace sf;
 
 void LeaderBoard::Load()
 {
-	cout << "Level select load\n";
+	cout << "Leaderboard load\n";
 	{
 		constexpr int numOfOptions = 1;
 		const string optionTexts[numOfOptions] = { "Back" };
@@ -32,10 +30,9 @@ void LeaderBoard::Load()
 
 void LeaderBoard::Update(const double& dt)
 {
-	this_thread::sleep_for(chrono::milliseconds(100));
-	
-	if (Keyboard::isKeyPressed(CONTROLS[4]))
+	if (Keyboard::isKeyPressed(CONTROLS[4]) && coolDown <= 0)
 	{
+		coolDown = 0.2f;
 		options.clear();
 		texts.clear();
 		Engine::ChangeScene(&menu);

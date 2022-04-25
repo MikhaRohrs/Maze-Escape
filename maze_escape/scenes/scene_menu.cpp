@@ -9,7 +9,6 @@
 using namespace std;
 using namespace sf;
 
-
 void MenuScene::Load()
 {
 	cout << "Menu Load \n";
@@ -41,9 +40,9 @@ void MenuScene::Load()
 
 void MenuScene::Update(const double& dt)
 {
-	this_thread::sleep_for(chrono::milliseconds(100));
-	if (Keyboard::isKeyPressed(CONTROLS[0]))
+	if (Keyboard::isKeyPressed(CONTROLS[0]) && coolDown <= 0)
 	{
+		coolDown = 0.2f;
 		if (selectedOption - 1 >= 0)
 		{
 	  		texts[selectedOption]->ChangeColor(grey);
@@ -51,8 +50,9 @@ void MenuScene::Update(const double& dt)
 			texts[selectedOption]->ChangeColor(Color::White);
 		}
 	}
-	if (Keyboard::isKeyPressed(CONTROLS[1]))
+	if (Keyboard::isKeyPressed(CONTROLS[1]) && coolDown <= 0)
 	{
+		coolDown = 0.2f;
 		if(selectedOption + 1 < options.size())
 		{
       		texts[selectedOption]->ChangeColor(grey);
@@ -60,8 +60,9 @@ void MenuScene::Update(const double& dt)
       		texts[selectedOption]->ChangeColor(Color::White);
 		}
 	}
-	if (Keyboard::isKeyPressed(CONTROLS[4])) 
+	if (Keyboard::isKeyPressed(CONTROLS[4]) && coolDown <= 0) 
 	{
+		coolDown = 0.2f;
 		options.clear();
 		texts.clear();
 		switch (selectedOption)
@@ -82,5 +83,6 @@ void MenuScene::Update(const double& dt)
 			break;
 		}
 	}
+	coolDown -= dt;
 	Scene::Update(dt);
 }

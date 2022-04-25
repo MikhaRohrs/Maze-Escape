@@ -19,4 +19,5 @@ public:
   std::vector<std::shared_ptr<TextComponent>> texts;
   int selectedOption;
   sf::Color grey = sf::Color(50, 50, 50, 255);
+  float coolDown = 0.2f;
 };
