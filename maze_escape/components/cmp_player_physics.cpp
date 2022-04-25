@@ -21,23 +21,51 @@ void PlayerPhysicsComponent::update(double dt)
     //   - Set pressed key bool to true (For the corresponding axis).
     if(Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
     {
-        if (getVelocity().x > -_maxVelocity.x) { impulse({ -static_cast<float>(dt * _groundspeed), 0 }); pressedKeyX = true; }
+        if (getVelocity().x > -_maxVelocity.x) { impulse({ -static_cast<float>(dt * _groundspeed), 0 }); pressedKeyX = true; _parent->setRotation(270.f); }
     }
 
     if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
     {
-    	if (getVelocity().x < _maxVelocity.x) { impulse({ static_cast<float>(dt * _groundspeed), 0 }); pressedKeyX = true; }
+        if (getVelocity().x < _maxVelocity.x) { impulse({ static_cast<float>(dt * _groundspeed), 0 }); pressedKeyX = true; _parent->setRotation(90.f); }
     }
 
     if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
     {
-        if (getVelocity().y > -_maxVelocity.y) { impulse({ 0, -static_cast<float>(dt * _groundspeed) }); pressedKeyY = true; }
+        if (getVelocity().y > -_maxVelocity.y) { impulse({ 0, -static_cast<float>(dt * _groundspeed) }); pressedKeyY = true; _parent->setRotation(180.f); }
     }
 
     if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
     {
-        if (getVelocity().y < _maxVelocity.y) { impulse({ 0, static_cast<float>(dt * _groundspeed) }); pressedKeyY = true; }
+        if (getVelocity().y < _maxVelocity.y) { impulse({ 0, static_cast<float>(dt * _groundspeed) }); pressedKeyY = true; _parent->setRotation(0.f); }
     }
+
+    if(getVelocity().x > 75)
+    {
+	    if(getVelocity().y > 75)
+	    {
+		    // Top right
+            _parent->setRotation(45.f);
+	    }
+        else if (getVelocity().y < -75)
+        {
+	        // Bottom right
+            _parent->setRotation(135.f);
+        }
+    }
+    else if(getVelocity().x < -75)
+    {
+	    if(getVelocity().y > 75)
+	    {
+		    // Top left
+            _parent->setRotation(315.f);
+	    }
+        else if(getVelocity().y < -75)
+        {
+	        // Bottom left
+            _parent->setRotation(225.f);
+        }
+    }
+
 
     // Check the condition of both pressed key booleans. If one is false, it means that the player is not pressing a button
     // to move in that axis, and so should slow down/stop moving in that direction, so dampen the velocity for that axis, while not

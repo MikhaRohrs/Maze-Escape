@@ -12,7 +12,7 @@ void PlayerWeaponComponent::update(double dt)
 {
     if(Keyboard::isKeyPressed(Keyboard::Space) && _cooldown <= 0)
     {
-        _cooldown = 2.f;
+        _cooldown = 1.f;
         Attack();
         _ammo--;
     }
@@ -22,7 +22,30 @@ void PlayerWeaponComponent::update(double dt)
 void PlayerWeaponComponent::Attack()
 {
     auto projectile = _parent->scene->makeEntity();
-    projectile->setPosition(_parent->getPosition() + Vector2f(0.f, 4.f));
+    Vector2f facingDirection = { 0.f, 0.f };
+
+    // Up
+    if (_parent->getRotation() == 0.f)       { facingDirection = { 0.f, 5.f };      }
+    // Up-Right
+    else if (_parent->getRotation() == 45.f) { facingDirection = { 2.5f, -2.5f };    }
+
+    // Right
+    else if (_parent->getRotation() == 90.f)    { facingDirection = { 5.f, 0.f };     }
+    // Down-Right
+    else if (_parent->getRotation() == 135.f) { facingDirection = { 2.5f, 2.5f };  }
+
+    // Down
+    else if (_parent->getRotation() == 180.f) { facingDirection = { 0.f, -5.f };    }
+    //Down-Left
+    else if (_parent->getRotation() == 225.f) { facingDirection = { -2.5f, 2.5f }; }
+
+    // Left
+    else if (_parent->getRotation() == 270.f) { facingDirection = { -5.f, 0.f };    }
+    // Up-Left
+    else if (_parent->getRotation() == 315.f) { facingDirection = { -2.5f, -2.5f };  }
+    
+
+    projectile->setPosition(_parent->getPosition() + facingDirection);
     // Add component to move projectile, expire after time delay/contact with wall tile, kill enemies on contact.
 
     auto shape = projectile->addComponent<ShapeComponent>();
@@ -35,7 +58,7 @@ void PlayerWeaponComponent::Attack()
     auto physics = projectile->addComponent<PhysicsComponent>(true, Vector2f(6.f, 6.f));
     physics->setRestitution(.0f);
     physics->setFriction(.005f);
-    physics->impulse(sf::rotate(Vector2f(0, 15.f), -_parent->getRotation()));
+    physics->impulse(facingDirection * Vector2f{4, 4});
 }
 
 PlayerWeaponComponent::PlayerWeaponComponent(Entity* p) : Component(p), _ammo(10) {}

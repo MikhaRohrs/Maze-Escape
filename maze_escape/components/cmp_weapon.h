@@ -7,7 +7,7 @@ class PlayerWeaponComponent : public Component {
 protected:
 	void Attack();
 	int _ammo;
-	float _cooldown = 2.f;
+	float _cooldown = 1.f;
 
 public:
 	void update(double dt) override;
