@@ -1,4 +1,4 @@
-#include "scene_options.h"
+#include "scene_levelSelect.h"
 #include "../game.h"
 #include "../components/cmp_text.h"
 #include "../components/cmp_sprite.h"
@@ -11,12 +11,12 @@
 using namespace std;
 using namespace sf;
 
-void Options::Load()
+void LevelSelect::Load()
 {
 	cout << "Level select load\n";
 	{
-		constexpr int numOfOptions = 4;
-		const string optionTexts[numOfOptions] = { "Screen Resolution", "Remap controlls", "Toggle sound", "Back" };
+		constexpr int numOfOptions = 2;
+		const string optionTexts[numOfOptions] = { "Level 1", "Back" };
 		selectedOption = 0;
 
 		const auto title = makeEntity();
@@ -33,13 +33,11 @@ void Options::Load()
 		}
 		options[0]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.1f));
 		options[1]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.2f));
-		options[2]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.32f));
-		options[3]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.47f));
 	}
 	setLoaded(true);
 }
 
-void Options::Update(const double& dt)
+void LevelSelect::Update(const double& dt)
 {
 	this_thread::sleep_for(chrono::milliseconds(100));
 	if (Keyboard::isKeyPressed(CONTROLS[0]))
@@ -64,13 +62,12 @@ void Options::Update(const double& dt)
 	{
 		switch (selectedOption)
 		{
-		case 0: // Screen resolution
+		case 0: // Level 1
+			options.clear();
+			texts.clear();
+			Engine::ChangeScene(&level1);
 			break;
-		case 1: // Remap controlls
-			break;
-		case 2: // Toggle sound
-			break;
-		case 3: // Main menu
+		case 1: // Main menu
 			options.clear();
 			texts.clear();
 			Engine::ChangeScene(&menu);

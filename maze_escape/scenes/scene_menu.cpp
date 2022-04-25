@@ -2,58 +2,47 @@
 #include "../components/cmp_text.h"
 #include "../components/cmp_sprite.h"
 #include "../game.h"
+#include "SFML/Window/Event.hpp"
 #include <SFML/Window/Keyboard.hpp>
 #include <iostream>
-#include "SFML/Graphics/RectangleShape.hpp"
-#include "SFML/Window/Event.hpp"
-
-#include <chrono>
-#include <thread>
 
 using namespace std;
 using namespace sf;
+
 
 void MenuScene::Load()
 {
 	cout << "Menu Load \n";
 	{
+		constexpr int numOfOptions = 4;
+		const string optionTexts[numOfOptions] = { "Start", "Leaderboard", "Options", "Exit" };
+		selectedOption = 0;
+
 		const auto title = makeEntity();
   		auto titleText = title->addComponent<TextComponent>("Maze Escape");
 
-		for (int i = 0; i < NUM_OF_OPTIONS; i++)
+		for (int i = 0; i < numOfOptions; i++)
 		{
-			options[i] = makeEntity();
-
-			// Commented out as I can not figure out how to have text be centered to the boxes. If fixed uncomment
-			/*optionBox[i] = options[i]->addComponent<ShapeComponent>();
-			optionBox[i]->setShape<RectangleShape>(Vector2f(120.0f, 50.0f));
-			optionBox[i]->getShape().setFillColor(grey);
-			optionBox[i]->getShape().setOrigin(Vector2f(60.0f, 25.0f));*/
+			options.push_back(makeEntity());
+			texts.push_back(options[i]->addComponent<TextComponent>(optionTexts[i]));
+			if (i != 0)
+			{
+				texts[i]->ChangeColor(grey);
+			}
 		}
 
 		options[0]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.1f));
 		options[1]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.2f));
 		options[2]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.32f));
 		options[3]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.47f));
-
-		texts[0] = options[0]->addComponent<TextComponent>("Start");
-
-		texts[1] = options[1]->addComponent<TextComponent>("Leaderboard");
-		texts[1]->ChangeColor(grey);
-
-		texts[2] = options[2]->addComponent<TextComponent>("Options");
-		texts[2]->ChangeColor(grey);
-
-		texts[3] = options[3]->addComponent<TextComponent>("Exit");
-		texts[3]->ChangeColor(grey);
 	}
 	setLoaded(true);
 }
 
 void MenuScene::Update(const double& dt)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	if (Keyboard::isKeyPressed(Keyboard::W) || Keyboard::isKeyPressed(Keyboard::Up))
+	this_thread::sleep_for(chrono::milliseconds(100));
+	if (Keyboard::isKeyPressed(CONTROLS[0]))
 	{
 		if (selectedOption - 1 >= 0)
 		{
@@ -62,28 +51,32 @@ void MenuScene::Update(const double& dt)
 			texts[selectedOption]->ChangeColor(Color::White);
 		}
 	}
-	if (Keyboard::isKeyPressed(Keyboard::S) || Keyboard::isKeyPressed(Keyboard::Down))
+	if (Keyboard::isKeyPressed(CONTROLS[1]))
 	{
-		if(selectedOption + 1 < NUM_OF_OPTIONS)
+		if(selectedOption + 1 < options.size())
 		{
       		texts[selectedOption]->ChangeColor(grey);
       		selectedOption++;
       		texts[selectedOption]->ChangeColor(Color::White);
 		}
 	}
-
-	if (Keyboard::isKeyPressed(Keyboard::Space)) 
+	if (Keyboard::isKeyPressed(CONTROLS[4])) 
 	{
-		for (int i = 0; i < 4; i++) { texts[i].reset(); options[i].reset(); }
 		switch (selectedOption)
 		{
-		case 0: // Start
-			Engine::ChangeScene(&level1);
+		case 0: // Level select
+			options.clear();
+			texts.clear();
+			Engine::ChangeScene(&levelSelect);
 			break;
 		case 1: // Leaderboard
+			options.clear();
+			texts.clear();
 			Engine::ChangeScene(&leaderBoard);
 			break;
 		case 2: // Options
+			options.clear();
+			texts.clear();
 			Engine::ChangeScene(&optionScene);
 			break;
 		case 3: // Exit

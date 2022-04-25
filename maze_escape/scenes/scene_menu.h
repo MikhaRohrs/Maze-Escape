@@ -3,8 +3,7 @@
 #include "engine.h"
 #include "../components/cmp_text.h"
 #include "../components/cmp_sprite.h"
-
-#define NUM_OF_OPTIONS 4
+#include <vector>
 
 class MenuScene : public Scene
 {
@@ -16,10 +15,12 @@ public:
 
   void Update(const double& dt) override;
 
+  std::vector<std::shared_ptr<Entity>> options;
+  std::vector<std::shared_ptr<TextComponent>> texts;
+  int selectedOption;
+  sf::Color grey = sf::Color(50, 50, 50, 255);
+
 private:
-    std::shared_ptr<Entity> options[NUM_OF_OPTIONS];
-    std::shared_ptr<ShapeComponent> optionBox[NUM_OF_OPTIONS];
-    std::shared_ptr<TextComponent> texts[NUM_OF_OPTIONS];
-    int selectedOption = 0;
-    sf::Color grey = sf::Color(50, 50, 50, 255);
+    
+    
 };

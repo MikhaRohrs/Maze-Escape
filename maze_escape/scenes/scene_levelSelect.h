@@ -2,11 +2,11 @@
 
 #include "scene_menu.h"
 
-class Options : public MenuScene
+class LevelSelect : public MenuScene
 {
 public:
-	Options() = default;
-	~Options() override = default;
+	LevelSelect() = default;
+	~LevelSelect() override = default;
 
 	void Load() override;
 
