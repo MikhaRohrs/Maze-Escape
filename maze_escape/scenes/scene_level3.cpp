@@ -2,7 +2,7 @@
 #include "../components/cmp_physics.h"
 #include "../components/cmp_player_physics.h"
 #include "../game.h"
-#include "../components/cmp_bullet.h"
+//#include "../components/cmp_bullet.h"
 #include <LevelSystem.h>
 #include <iostream>
 using namespace std;
@@ -75,7 +75,7 @@ void Level3Scene::Update(const double& dt) {
     auto rock = makeEntity();
     rock->setPosition(ls::getTilePosition(ls::findTiles('r')[0]) +
                       Vector2f(0, 40) );
-    rock->addComponent<BulletComponent>(30.f);
+    //rock->addComponent<BulletComponent>(30.f);
     auto s = rock->addComponent<ShapeComponent>();
     s->setShape<sf::CircleShape>(40.f);
     s->getShape().setFillColor(Color::Cyan);

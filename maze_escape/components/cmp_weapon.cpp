@@ -1,7 +1,7 @@
 #include "ecm.h"
 #include "cmp_weapon.h"
 #include "engine.h"
-#include "cmp_enemy_turret.h"
+#include "cmp_projectile.h"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Window/Event.hpp"
 #include "SFML/Window/Keyboard.hpp"
@@ -46,7 +46,6 @@ void PlayerWeaponComponent::Attack()
     
 
     projectile->setPosition(_parent->getPosition() + facingDirection);
-    // Add component to move projectile, expire after time delay/contact with wall tile, kill enemies on contact.
 
     auto shape = projectile->addComponent<ShapeComponent>();
     shape->setShape<sf::RectangleShape>(sf::Vector2f(6.f, 6.f));
@@ -55,9 +54,12 @@ void PlayerWeaponComponent::Attack()
     shape->getShape().setOutlineThickness(2);
     shape->getShape().setOrigin(Vector2f(3.f, 3.f));
 
+    projectile->addComponent<ProjectileComponent>();
+
+
     auto physics = projectile->addComponent<PhysicsComponent>(true, Vector2f(6.f, 6.f));
-    physics->setRestitution(.0f);
-    physics->setFriction(.005f);
+    physics->setRestitution(1);
+    physics->setFriction(0);
     physics->impulse(facingDirection * Vector2f{4, 4});
 }
 

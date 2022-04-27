@@ -5,11 +5,12 @@
 using namespace std;
 using namespace sf;
 
-float timer = 5.0f;
+float timer;
 void LoseScene::Load()
 {
-        auto txt = makeEntity();
-        auto text = txt->addComponent<TextComponent>("You lose.\nReturning to the main menu in 5 seconds...");
+    timer = 5.f;
+	auto txt = makeEntity();
+	auto text = txt->addComponent<TextComponent>("You lose.\nReturning to the main menu in 5 seconds...");
     setLoaded(true);
 }
 
@@ -20,6 +21,5 @@ void LoseScene::Update(const double& dt)
     {
         Engine::ChangeScene(&menu);
     }
-
     Scene::Update(dt);
 }

@@ -11,16 +11,19 @@
 using namespace std;
 using namespace sf;
 
+// Player entity and attached shape component
 static shared_ptr<Entity> player;
 static shared_ptr<ShapeComponent> playerShape;
 
+// Timer entity and attached timer component
 shared_ptr<TimerComponent> timerText;
 static shared_ptr<Entity> timer;
 
+// Weapon powerup/pickupable entity and attached shape component
 static shared_ptr<Entity> weapon;
 static shared_ptr <ShapeComponent> weaponShape;
 
-bool pickedUpWeapon = false;
+bool pickedUpWeapon;
 
 void Level1Scene::Load() {
   cout << " Scene 1 Load" << endl;
@@ -66,15 +69,15 @@ void Level1Scene::Load() {
   }
 
     // Create weapon powerup
-  {
-      weapon = makeEntity();
-      weapon->setPosition(ls::getTilePosition(ls::findTiles(ls::WEAPON)[0]));
-      weaponShape = weapon->addComponent<ShapeComponent>();
-      weaponShape->setShape<sf::RectangleShape>(Vector2f(15.f, 40.f));
-      weaponShape->getShape().setPosition(weapon->getPosition());
-      weaponShape->getShape().setFillColor(Color::Cyan);
-      weaponShape->getShape().setOrigin(Vector2f(5.f, 10.f));
-  }
+	weapon = makeEntity();
+	weapon->setPosition(ls::getTilePosition(ls::findTiles(ls::WEAPON)[0]));
+	weaponShape = weapon->addComponent<ShapeComponent>();
+	weaponShape->setShape<sf::RectangleShape>(Vector2f(20.f, 40.f));
+	weaponShape->getShape().setPosition(weapon->getPosition());
+	weaponShape->getShape().setFillColor(Color::Cyan);
+	weaponShape->getShape().setOrigin(Vector2f(10.f, 20.f));
+
+    pickedUpWeapon = false;
 
   //Simulate long loading times
   std::this_thread::sleep_for(std::chrono::milliseconds(3000));
@@ -83,10 +86,16 @@ void Level1Scene::Load() {
   setLoaded(true);
 }
 
+// Clear out entities, unload components, and unload the tile map.
 void Level1Scene::UnLoad() {
   cout << "Scene 1 Unload" << endl;
   player.reset();
   timer.reset();
+  weapon.reset();
+
+  playerShape.reset();
+  timerText.reset();
+  weaponShape.reset();
   ls::unload();
   Scene::UnLoad();
 }
@@ -98,19 +107,33 @@ void Level1Scene::Update(const double& dt)
         Engine::ChangeScene((Scene*)&level2);
     }
 
-	if(!pickedUpWeapon && playerShape->getShape().getGlobalBounds().contains(weaponShape->getShape().getGlobalBounds().getPosition()))
+    // If the player touches the weapon powerup, give the player a weapon and remove the powerup shape from the game, to prevent multiple weapons being picked up.
+    if (!pickedUpWeapon && playerShape->getShape().getGlobalBounds().findIntersection(weaponShape->getShape().getGlobalBounds()))
 	{
-  		auto newWeapon = player->addComponent<PlayerWeaponComponent>();
-		printf("hit\n");
-		weapon->setVisible(false);
+        weapon->setVisible(false);
+    	auto newWeapon = player->addComponent<PlayerWeaponComponent>();
 		pickedUpWeapon = true;
 	}
+    std::cout << playerShape->getShape().getPosition() << std::endl;
 
+    // If the player runs out of time, end the game, player loses.
   if (timerText->GetCurrentTime() <= 0) { Engine::ChangeScene(&loseGame); }
   Scene::Update(dt);
 }
 
 void Level1Scene::Render() {
+
+    // For each entity, check if it is at least 150 units or less away from the player. Render only entities that meet this criteria.
+    for each(std::shared_ptr<Entity> e in ents.list)
+    {
+        // Leave timer entity alone, as it should always be rendered.
+        if (e == timer || e == weapon) { continue; }
+        Vector2f playerDistance = e->getPosition() - player->getPosition();
+        playerDistance.x = abs(playerDistance.x); playerDistance.y = abs(playerDistance.y);
+
+        playerDistance.length() > 150 ? e->setVisible(false) : e->setAlive(true);
+    }
+    
   ls::render(Engine::GetWindow(), player->getPosition());
   Scene::Render();
 }

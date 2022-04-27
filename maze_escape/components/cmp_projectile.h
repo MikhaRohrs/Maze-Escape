@@ -2,13 +2,13 @@
 #include "cmp_physics.h"
 #include <ecm.h>
 
-class BulletComponent : public Component {
+class ProjectileComponent : public Component {
 protected:
   float _lifetime;
 
 public:
   void update(double dt) override;
   void render() override {}
-  explicit BulletComponent(Entity* p, float lifetime = 3.f);
-  BulletComponent() = delete;
+  explicit ProjectileComponent(Entity* p);
+  ProjectileComponent() = delete;
 };
