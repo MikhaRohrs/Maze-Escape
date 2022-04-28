@@ -22,7 +22,7 @@ void TextComponent::SetText(const std::string& str)
   _text.setString(_string);
 }
 
-void TextComponent::ChangeColor(sf::Color color)
+void TextComponent::ChangeColor(const sf::Color color)
 {
     _text.setFillColor(color);
 }

@@ -6,20 +6,25 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <iostream>
 
+#include "SFML/Window/VideoMode.hpp"
+
 using namespace std;
 using namespace sf;
+
+bool isFullScreen = true;
 
 void Options::Load()
 {
 	cout << "Options load\n";
 	{
-		constexpr int numOfOptions = 4;
-		const string optionTexts[numOfOptions] = { "Screen resolution", "Remap controls", "Toggle sound", "Back" };
+		constexpr int numOfOptions = 3;
+		const string optionTexts[numOfOptions] = { "Remap controls", "Toggle sound", "Back" };
 		SelectedOption = 0;
 
 		const auto title = makeEntity();
-		auto titleText = title->addComponent<TextComponent>("Options");
+		auto titleText = title->addComponent<TextComponent>("Maze Escape/Options");
 
+		float offset = 0.0f;
 		for (int i = 0; i < numOfOptions; i++)
 		{
 			MenuOptions.push_back(makeEntity());
@@ -28,11 +33,9 @@ void Options::Load()
 			{
 				Texts[i]->ChangeColor(Grey);
 			}
+			offset -= 50.0f;
+			MenuOptions[i]->setPosition(Vector2f(70.0f, GAME_HEIGHT - (GAME_HEIGHT + offset)));
 		}
-		MenuOptions[0]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.1f));
-		MenuOptions[1]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.2f));
-		MenuOptions[2]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.32f));
-		MenuOptions[3]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.47f));
 	}
 	setLoaded(true);
 }
@@ -66,14 +69,12 @@ void Options::Update(const double& dt)
 		Texts.clear();
 		switch (SelectedOption)
 		{
-		case 0: // Screen resolution
-			break;
-		case 1: // Remap controls
+		case 0: // Remap controls
 			Engine::ChangeScene(&controlOptions);
 			break;
-		case 2: // Toggle sound
+		case 1: // Toggle sound
 			break;
-		case 3: // Main menu
+		case 2: // Main menu
 			Engine::ChangeScene(&menu);
 			break;
 		default:

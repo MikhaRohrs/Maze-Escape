@@ -18,8 +18,9 @@ void LevelSelect::Load()
 		SelectedOption = 0;
 
 		const auto title = makeEntity();
-		auto titleText = title->addComponent<TextComponent>("Select Maze");
+		auto titleText = title->addComponent<TextComponent>("Maze Escape/Level Select");
 
+		float offset = 0.0f;
 		for (int i = 0; i < numOfOptions; i++)
 		{
 			MenuOptions.push_back(makeEntity());
@@ -28,9 +29,9 @@ void LevelSelect::Load()
 			{
 				Texts[i]->ChangeColor(Grey);
 			}
+			offset -= 50.0f;
+			MenuOptions[i]->setPosition(Vector2f(70.0f, GAME_HEIGHT - (GAME_HEIGHT + offset)));
 		}
-		MenuOptions[0]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.1f));
-		MenuOptions[1]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.2f));
 	}
 	setLoaded(true);
 }

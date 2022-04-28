@@ -40,7 +40,9 @@ public:
   static sf::Vector2u getWindowSize();
   static void setVsync(bool b);
 
+  static void Engine::PollEvent();
   static sf::Keyboard::Key CurrentKeyPress;
+  static sf::RenderWindow* _window;
 
 private:
   static Scene* _activeScene;

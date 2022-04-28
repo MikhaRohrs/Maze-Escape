@@ -22,9 +22,8 @@ extern Options optionScene;
 extern LevelSelect levelSelect;
 extern ControlOptions controlOptions;
 
-constexpr uint16_t GAME_WIDTH[4] = { 160, 640, 1280, 1920 };
-constexpr uint16_t GAME_HEIGHT[4] = { 192, 480, 720, 1080 };
-constexpr int CURRENT_RES = 2;
+constexpr uint16_t GAME_WIDTH = 1920;
+constexpr uint16_t GAME_HEIGHT = 1080;
 
 inline bool soundEnabled = true;
 
@@ -34,5 +33,5 @@ inline sf::Keyboard::Key CONTROLS[5] =
 	sf::Keyboard::S, // 1 - DOWN
 	sf::Keyboard::A, // 2 - LEFT
 	sf::Keyboard::D, // 3 - RIGHT
-	sf::Keyboard::Space // 4 - INTERACT or SELECT
+	sf::Keyboard::Enter // 4 - INTERACT or SELECT
 };

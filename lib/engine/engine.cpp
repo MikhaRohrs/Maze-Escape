@@ -12,7 +12,8 @@ using namespace sf;
 using namespace std;
 Scene* Engine::_activeScene = nullptr;
 std::string Engine::_gameName;
-sf::Keyboard::Key Engine::CurrentKeyPress;
+Keyboard::Key Engine::CurrentKeyPress;
+RenderWindow* Engine::_window;
 
 static bool loading = false; // Loading new scene
 static float loadTextOpacity = 0.f; // Rapidly increments/decrement between 50 and 250, sets opacity of loading text.
@@ -22,7 +23,8 @@ static bool gainingOpacity = true; // Bool that tracks if the opacity of the loa
 static RectangleShape loadingBar(Vector2f(100, 10)); // Create the bar (Doing this outside the render function to prevent initializing this object per frame.
 static Text t("L O A D I N G . . .", *Resources::get<sf::Font>("RobotoMono-Regular.ttf")); // Loading text object with pre-defined font.
 
-static RenderWindow* _window; // Game window.
+//RenderWindow* _window; // Game window.
+static Event _event;
 
 /**
  * \brief Loading menu update function where the loading text's opacity will cycle and check if the currently-loading scene has fully loaded.
@@ -105,6 +107,25 @@ void Engine::Render(RenderWindow& window) {
   Renderer::render();
 }
 
+void Engine::PollEvent()
+{
+    while (_window->pollEvent(_event))
+    {
+        if (_event.type == Event::Closed)
+        {
+            _window->close();
+        }
+        if (_event.type == Event::KeyPressed)
+        {
+            CurrentKeyPress = _event.key.code;
+        }
+        if (Keyboard::isKeyPressed(Keyboard::Escape))
+        {
+            _window->close();
+        }
+    }
+}
+
 void Engine::Start(unsigned int width, unsigned int height,
                    const std::string& gameName, Scene* scn) {
   RenderWindow window(VideoMode(width, height), gameName);
@@ -116,17 +137,9 @@ void Engine::Start(unsigned int width, unsigned int height,
 
   while (window.isOpen()) {
     Event event{};
-    while (window.pollEvent(event)) 
-    {
-		if (event.type == Event::Closed) 
-		{
-			window.close();
-		}
-    	if (event.type == Event::KeyPressed)
-    	{
-            CurrentKeyPress = event.key.code;
-    	}
-    }
+    _event = event;
+    
+    Engine::PollEvent();
 
     window.clear();
     Update();

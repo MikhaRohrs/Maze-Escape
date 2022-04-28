@@ -9,7 +9,8 @@
 using namespace std;
 using namespace sf;
 
-string KeycodeToString(Keyboard::Key& key)
+// For some reason sfml has no way of converting keycode to string so this function is needed for that.
+string ControlOptions::KeycodeToString(Keyboard::Key& key)
 {
 	string keyAsString;
 	#define ITEM(key) case Keyboard:: ## key : keyAsString = #key; break
@@ -123,27 +124,52 @@ string KeycodeToString(Keyboard::Key& key)
 	return keyAsString;
 }
 
+void ControlOptions::ReplaceControl(const int controlNum, const double &dt)
+{
+	const auto oldKey = CONTROLS[controlNum];
+	Keyboard::Key newKey;
+
+	// Give the user some time to enter the new button
+	CoolDown = 5000.0f;
+	while (CoolDown >= 0.0f)
+	{
+		Engine::PollEvent();
+		newKey = Engine::CurrentKeyPress;
+		CoolDown -= dt;
+	}
+
+	// Make sure that if the button entered is already being used, to swap.
+	for (int i = 0; i < 5; i++)
+	{
+		if (newKey == CONTROLS[i])
+		{
+			CONTROLS[i] = oldKey;
+		}
+	}
+	CONTROLS[controlNum] = newKey;
+	CoolDown = 0.2f;
+}
+
 void ControlOptions::Load()
 {
-	cout << "Options load\n";
+	cout << "Control options load\n";
 	{
-		constexpr int numOfOptions = 3;
-		const string optionTexts[numOfOptions] = { "Change Controls", "Reset to Default", "Back" };
+		constexpr int numOfOptions = 7;
+		const string optionTexts[numOfOptions] = {
+			"Move Up: " + KeycodeToString(CONTROLS[0]),
+			"Move Down: " + KeycodeToString(CONTROLS[1]),
+			"Move Left: " + KeycodeToString(CONTROLS[2]),
+			"Move Right: " + KeycodeToString(CONTROLS[3]),
+			"Interact / Select: " + KeycodeToString(CONTROLS[4]),
+			"Reset to Default",
+			"Back" };
+
 		SelectedOption = 0;
 
 		const auto title = makeEntity();
-		auto titleText = title->addComponent<TextComponent>("Options/Remap Controls");
+		auto titleText = title->addComponent<TextComponent>("Maze Escape/Options/Remap Controls\n Select a control you would like to rebind,\n then within 3 seconds press the key you would like to rebind it to.");
 
-
-		auto currentControls = makeEntity();
-		auto currentControlsText = currentControls->addComponent<TextComponent>
-		("Move Up: " + KeycodeToString(CONTROLS[0]) +
-			"\nMove Down: " + KeycodeToString(CONTROLS[1]) +
-			"\nMove Left: " + KeycodeToString(CONTROLS[2]) +
-			"\nMove Right: " + KeycodeToString(CONTROLS[3]) +
-			"\nInteract / Select: " + KeycodeToString(CONTROLS[4]));
-		currentControls->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.1f));
-		
+		float offset = -80.0f;
 		for (int i = 0; i < numOfOptions; i++)
 		{
 			MenuOptions.push_back(makeEntity());
@@ -152,17 +178,16 @@ void ControlOptions::Load()
 			{
 				Texts[i]->ChangeColor(Grey);
 			}
+			offset -= 50.0f;
+			MenuOptions[i]->setPosition(Vector2f(70.0f, GAME_HEIGHT - (GAME_HEIGHT + offset)));
 		}
-
-		MenuOptions[0]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.2f));
-		MenuOptions[1]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.32f));
-		MenuOptions[2]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.47f));
 	}
 	setLoaded(true);
 }
 
 void ControlOptions::Update(const double& dt)
 {
+	// If UP is pressed
 	if (Keyboard::isKeyPressed(CONTROLS[0]) && CoolDown <= 0)
 	{
 		CoolDown = 0.2f;
@@ -173,6 +198,7 @@ void ControlOptions::Update(const double& dt)
 			Texts[SelectedOption]->ChangeColor(Color::White);
 		}
 	}
+	// If DOWN is pressed
 	if (Keyboard::isKeyPressed(CONTROLS[1]) && CoolDown <= 0)
 	{
 		CoolDown = 0.2f;
@@ -183,21 +209,29 @@ void ControlOptions::Update(const double& dt)
 			Texts[SelectedOption]->ChangeColor(Color::White);
 		}
 	}
+	// If SELECT is pressed
 	if (Keyboard::isKeyPressed(CONTROLS[4]) && CoolDown <= 0)
 	{
 		CoolDown = 0.2f;
 		switch (SelectedOption)
 		{
-		case 0: // Begin process of remapping
+		case 0: case 1: case 2: case 3: case 4: // Rebind keys
+			ReplaceControl(SelectedOption, dt);
+			MenuOptions.clear();
+			Texts.clear();
+			Engine::ChangeScene(&controlOptions);
 			break;
-		case 1: // Reset controls to default
+		case 5: // Reset controls to default
 			CONTROLS[0] = Keyboard::W;
 			CONTROLS[1] = Keyboard::S;
 			CONTROLS[2] = Keyboard::A;
 			CONTROLS[3] = Keyboard::D;
-			CONTROLS[4] = Keyboard::Space;
+			CONTROLS[4] = Keyboard::Enter;
+			MenuOptions.clear();
+			Texts.clear();
+			Engine::ChangeScene(&controlOptions);
 			break;
-		case 2: // Back to options
+		case 6: // Back to options
 			MenuOptions.clear();
 			Texts.clear();
 			Engine::ChangeScene(&optionScene);
