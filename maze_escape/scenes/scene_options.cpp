@@ -11,14 +11,14 @@
 using namespace std;
 using namespace sf;
 
-bool isFullScreen = true;
+string soundState = "ON";
 
 void Options::Load()
 {
 	cout << "Options load\n";
 	{
 		constexpr int numOfOptions = 3;
-		const string optionTexts[numOfOptions] = { "Remap controls", "Toggle sound", "Back" };
+		const string optionTexts[numOfOptions] = { "Remap controls", "Toggle sound: " + soundState, "Back" };
 		SelectedOption = 0;
 
 		const auto title = makeEntity();
@@ -73,6 +73,16 @@ void Options::Update(const double& dt)
 			Engine::ChangeScene(&controlOptions);
 			break;
 		case 1: // Toggle sound
+			soundEnabled = !soundEnabled;
+			if (soundEnabled)
+			{
+				soundState = "ON";
+			}
+			else
+			{
+				soundState = "OFF";
+			}
+			Engine::ChangeScene(&optionScene);
 			break;
 		case 2: // Main menu
 			Engine::ChangeScene(&menu);

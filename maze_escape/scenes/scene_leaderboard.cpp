@@ -5,14 +5,36 @@
 #include "SFML/Window/Event.hpp"
 #include <SFML/Window/Keyboard.hpp>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 using namespace sf;
+
+void LeaderBoard::ReadLeaderboardFile()
+{
+	ifstream file;
+	string line;
+	file.open("res/Leaderboard.txt");
+	if(!file.is_open())
+	{
+		return;
+	}
+
+	while (getline(file, line))
+	{
+		cout << line << "\n";
+	}
+
+	file.close();
+}
+
 
 void LeaderBoard::Load()
 {
 	cout << "Leaderboard load\n";
 	{
+		ReadLeaderboardFile();
+
 		constexpr int numOfOptions = 2;
 		const string optionTexts[numOfOptions] = { "Reset", "Back" };
 		SelectedOption = 0;
