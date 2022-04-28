@@ -11,6 +11,7 @@ Level3Scene level3;
 LoseScene loseGame;
 LeaderBoard leaderBoard;
 Options optionScene;
+ControlOptions controlOptions;
 LevelSelect levelSelect;
 
 int main() {

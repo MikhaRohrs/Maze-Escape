@@ -6,6 +6,8 @@
 #include <mutex>
 #include <string>
 
+#include "SFML/Window/Keyboard.hpp"
+
 class Scene {
 public:
   Scene() = default;
@@ -37,6 +39,8 @@ public:
   static sf::RenderWindow& GetWindow();
   static sf::Vector2u getWindowSize();
   static void setVsync(bool b);
+
+  static sf::Keyboard::Key CurrentKeyPress;
 
 private:
   static Scene* _activeScene;

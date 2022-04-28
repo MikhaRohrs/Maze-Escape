@@ -12,6 +12,7 @@ using namespace sf;
 using namespace std;
 Scene* Engine::_activeScene = nullptr;
 std::string Engine::_gameName;
+sf::Keyboard::Key Engine::CurrentKeyPress;
 
 static bool loading = false; // Loading new scene
 static float loadTextOpacity = 0.f; // Rapidly increments/decrement between 50 and 250, sets opacity of loading text.
@@ -112,15 +113,19 @@ void Engine::Start(unsigned int width, unsigned int height,
   Renderer::initialise(window);
   Physics::initialise();
   ChangeScene(scn);
+
   while (window.isOpen()) {
-    Event event;
-    while (window.pollEvent(event)) {
-      if (event.type == Event::Closed) {
-        window.close();
-      }
-    }
-    if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-      window.close();
+    Event event{};
+    while (window.pollEvent(event)) 
+    {
+		if (event.type == Event::Closed) 
+		{
+			window.close();
+		}
+    	if (event.type == Event::KeyPressed)
+    	{
+            CurrentKeyPress = event.key.code;
+    	}
     }
 
     window.clear();

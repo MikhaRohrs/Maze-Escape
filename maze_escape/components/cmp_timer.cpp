@@ -22,7 +22,7 @@ void TimerComponent::update(double dt)
 void TimerComponent::render() { Renderer::queue(_text.get()); }
 
 TimerComponent::TimerComponent(Entity* const p)
-    : Component(p), _currentTime(5.0f), _text(std::make_shared<sf::Text>())
+    : Component(p), _currentTime(60.0f), _text(std::make_shared<sf::Text>())
 {
 	_font = Resources::get<sf::Font>("RobotoMono-Regular.ttf");
     _text->setFont(*_font);

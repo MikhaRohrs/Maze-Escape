@@ -15,26 +15,26 @@ void LeaderBoard::Load()
 	{
 		constexpr int numOfOptions = 1;
 		const string optionTexts[numOfOptions] = { "Back" };
-		selectedOption = 0;
+		SelectedOption = 0;
 
 		const auto title = makeEntity();
 		auto titleText = title->addComponent<TextComponent>("Leaderboard");
 
-		options.push_back(makeEntity());
-		texts.push_back(options[0]->addComponent<TextComponent>(optionTexts[0]));
+		MenuOptions.push_back(makeEntity());
+		Texts.push_back(MenuOptions[0]->addComponent<TextComponent>(optionTexts[0]));
 
-		options[0]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.47f));
+		MenuOptions[0]->setPosition(Vector2f(70.0f, GAME_HEIGHT[CURRENT_RES] - GAME_HEIGHT[CURRENT_RES] / 1.47f));
 	}
 	setLoaded(true);
 }
 
 void LeaderBoard::Update(const double& dt)
 {
-	if (Keyboard::isKeyPressed(CONTROLS[4]) && coolDown <= 0)
+	if (Keyboard::isKeyPressed(CONTROLS[4]) && CoolDown <= 0)
 	{
-		coolDown = 0.2f;
-		options.clear();
-		texts.clear();
+		CoolDown = 0.2f;
+		MenuOptions.clear();
+		Texts.clear();
 		Engine::ChangeScene(&menu);
 	}
 	MenuScene::Update(dt);

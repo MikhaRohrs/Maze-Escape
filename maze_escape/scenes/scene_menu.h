@@ -15,9 +15,10 @@ public:
 
   void Update(const double& dt) override;
 
-  std::vector<std::shared_ptr<Entity>> options;
-  std::vector<std::shared_ptr<TextComponent>> texts;
-  int selectedOption;
-  sf::Color grey = sf::Color(50, 50, 50, 255);
-  float coolDown = 0.2f;
+protected:
+  std::vector<std::shared_ptr<Entity>> MenuOptions;
+  std::vector<std::shared_ptr<TextComponent>> Texts;
+  int SelectedOption;
+  sf::Color Grey = sf::Color(50, 50, 50, 255);
+  float CoolDown = 0.2f;
 };

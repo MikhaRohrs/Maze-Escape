@@ -56,18 +56,6 @@ target_link_libraries(engine tile_level_loader maths ecm Box2D sfml-graphics sfm
 
 
 #### Maze Escape ####
-#file(GLOB_RECURSE SOURCES maze_escape/*.cpp maze_escape/*.h)
-#add_executable(MAZE_ESCAPE ${SOURCES})
-#target_include_directories(MAZE_ESCAPE PRIVATE ${SFML_INCS})
-#target_link_libraries(MAZE_ESCAPE sfml-graphics tile_level_loader ecm)
-
-#set_target_properties(MAZE_ESCAPE 
-#    PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY
-#    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
-#)
-
-#add_dependencies(MAZE_ESCAPE copy_resources)
-
 file(GLOB_RECURSE SOURCES maze_escape/*.cpp maze_escape/*.h)
 file(GLOB_RECURSE CMPNTS maze_escape/components/*.cpp maze_escape/components/*.h)
 file(GLOB_RECURSE SCENES maze_escape/scenes/*.cpp maze_escape/scenes/*.h)

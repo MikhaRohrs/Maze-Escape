@@ -9,6 +9,7 @@
 #include "scenes/scene_levelSelect.h"
 #include "scenes/scene_lose.h"
 #include "scenes/scene_options.h"
+#include "scenes/scene_options_controls.h"
 #include "SFML/Window/Keyboard.hpp"
 
 extern MenuScene menu;
@@ -19,6 +20,7 @@ extern LoseScene loseGame;
 extern LeaderBoard leaderBoard;
 extern Options optionScene;
 extern LevelSelect levelSelect;
+extern ControlOptions controlOptions;
 
 constexpr uint16_t GAME_WIDTH[4] = { 160, 640, 1280, 1920 };
 constexpr uint16_t GAME_HEIGHT[4] = { 192, 480, 720, 1080 };
