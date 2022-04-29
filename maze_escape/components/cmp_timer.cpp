@@ -9,7 +9,10 @@ void TimerComponent::update(double dt)
     _currentTime -= dt;
 
     // Timer will flash red if there are 10 seconds or less remaining.
+    // Otherwise, timer is black as normal. (Else statement needed if the player has <10 seconds left then gains additional time
+    // greater than 10 seconds
     if (_currentTime <= 11) { LowTimeFlash(); }
+	else {_text->setFillColor(sf::Color::Black);}
 
     // Cosmetic change where the text is shifted very slightly to the right when it reaches single digit numbers (As the number text is left-aligned).
     if (_currentTime <= 10) { _text->setPosition(sf::Vector2f(14, 0)); }
@@ -47,5 +50,11 @@ sf::Text& TimerComponent::GetTextObject()
 }
 
 float TimerComponent::GetCurrentTime() { return _currentTime; }
+
+// Adds more time to the timer, called when the player retrieves a powerup or defeats an enemy.
+void TimerComponent::AddTime(float timeIncrease)
+{
+    _currentTime += timeIncrease;
+}
 
 
