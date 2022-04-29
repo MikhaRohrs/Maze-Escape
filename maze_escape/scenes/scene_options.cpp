@@ -29,7 +29,7 @@ void Options::Load()
 		{
 			MenuOptions.push_back(makeEntity());
 			Texts.push_back(MenuOptions[i]->addComponent<TextComponent>(optionTexts[i]));
-			if (i != 0)
+			if (i != SelectedOption)
 			{
 				Texts[i]->ChangeColor(Grey);
 			}

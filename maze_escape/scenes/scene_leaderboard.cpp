@@ -10,11 +10,13 @@
 using namespace std;
 using namespace sf;
 
+string leaderBoardLocation = "res/Leaderboard.txt";
+
 void LeaderBoard::ReadLeaderboardFile()
 {
 	ifstream file;
 	string line;
-	file.open("res/Leaderboard.txt");
+	file.open(leaderBoardLocation);
 	if(!file.is_open())
 	{
 		return;
@@ -22,18 +24,48 @@ void LeaderBoard::ReadLeaderboardFile()
 
 	while (getline(file, line))
 	{
-		cout << line << "\n";
+		if (line.empty())
+		{
+			return;
+		}
+		ScoreList.push_back(line);
 	}
 
 	file.close();
 }
 
+void LeaderBoard::ResetLeaderboardFile()
+{
+	ofstream file{ leaderBoardLocation };
+	file.close();
+	ScoreList.clear();
+	ReadLeaderboardFile();
+}
 
 void LeaderBoard::Load()
 {
 	cout << "Leaderboard load\n";
 	{
 		ReadLeaderboardFile();
+
+		if (ScoreList.empty())
+		{
+			auto empty = makeEntity();
+			auto emptyText = empty->addComponent<TextComponent>("No scores yet");
+			empty->setPosition(Vector2f(70.0f, GAME_HEIGHT - (GAME_HEIGHT - 50.0f)));
+		}
+		else
+		{
+			string fullString;
+			for (int i = 0; i < ScoreList.size(); i++)
+			{
+				fullString += to_string(i + 1) + ".: " + ScoreList[i] + "\n";
+			}
+			auto score = makeEntity();
+			auto scoreText = score->addComponent<TextComponent>(fullString);
+			score->setPosition(Vector2f(70.0f, GAME_HEIGHT - (GAME_HEIGHT - 50.0f)));
+		}
+
 
 		constexpr int numOfOptions = 2;
 		const string optionTexts[numOfOptions] = { "Reset", "Back" };
@@ -88,7 +120,8 @@ void LeaderBoard::Update(const double& dt)
 		switch (SelectedOption)
 		{
 		case 0: // Reset leaderboard
-			
+			ResetLeaderboardFile();
+			Engine::ChangeScene(&leaderBoard);
 			break;
 		case 1: // Main menu
 			Engine::ChangeScene(&menu);

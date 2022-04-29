@@ -14,4 +14,7 @@ public:
 
 private:
 	void ReadLeaderboardFile();
+	void ResetLeaderboardFile();
+
+	std::vector<std::string> ScoreList;
 };
