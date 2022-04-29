@@ -6,8 +6,26 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <iostream>
 
+//#include "SFML/Audio/Sound.hpp"
+//#include "SFML/Audio/SoundBuffer.hpp"
+
 using namespace std;
 using namespace sf;
+
+void PlaySound()
+{
+	/*SoundBuffer buffer;
+	if (buffer.loadFromFile("res/sounds/shoot_01.wav"))
+	{
+		Sound sound;
+		sound.setBuffer(buffer);
+		sound.play();
+	}
+	else
+	{
+		cout << "Could not find file\n";
+	}*/
+}
 
 void MenuScene::Load()
 {
@@ -82,5 +100,11 @@ void MenuScene::Update(const double& dt)
 		}
 	}
 	CoolDown -= dt;
+
+	if(Keyboard::isKeyPressed(Keyboard::T))
+	{
+		PlaySound();
+	}
+
 	Scene::Update(dt);
 }
