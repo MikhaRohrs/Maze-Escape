@@ -15,30 +15,37 @@ void PlayerPhysicsComponent::update(double dt)
     bool pressedKeyY = false;
 
     // For each key:
-    //   - Check if corresponding key was pressed (Arrow keys and WASD)
+    //   - Check if corresponding key was pressed (Arrow keys or WASD)
     //   - If pressed, check if current velocity in that direction exceeds the max velocity.
     //   - If linear velocity is under the max velocity, apply a impulse, scaled by the ground speed of the player.
     //   - Set pressed key bool to true (For the corresponding axis).
     if(Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
     {
-        if (getVelocity().x > -_maxVelocity.x) { impulse({ -static_cast<float>(dt * _groundspeed), 0 }); pressedKeyX = true; _parent->setRotation(270.f); }
+        if (getVelocity().x > -_maxVelocity.x) { impulse({ -static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(270.f); }
     }
 
     if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
     {
-        if (getVelocity().x < _maxVelocity.x) { impulse({ static_cast<float>(dt * _groundspeed), 0 }); pressedKeyX = true; _parent->setRotation(90.f); }
+        if (getVelocity().x < _maxVelocity.x) { impulse({ static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(90.f); }
     }
 
     if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
     {
-        if (getVelocity().y > -_maxVelocity.y) { impulse({ 0, -static_cast<float>(dt * _groundspeed) }); pressedKeyY = true; _parent->setRotation(180.f); }
+        if (getVelocity().y > -_maxVelocity.y) { impulse({ 0, -static_cast<float>(dt * _speed) }); pressedKeyY = true; _parent->setRotation(180.f); }
     }
 
     if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
     {
-        if (getVelocity().y < _maxVelocity.y) { impulse({ 0, static_cast<float>(dt * _groundspeed) }); pressedKeyY = true; _parent->setRotation(0.f); }
+        if (getVelocity().y < _maxVelocity.y) { impulse({ 0, static_cast<float>(dt * _speed) }); pressedKeyY = true; _parent->setRotation(0.f); }
     }
 
+
+    // Set the rotation of the player diagonally. This is done by:
+    // 1. Checking the linear velocity on the x then y axis.
+    // 2. If the linear velocity for both the x and y axis are 75, including negative values, then set the rotation to face that direction.
+    //
+    // For example, if both the player's x and y velocities are exceeding 75 and both are positive, the player is moving
+    // top-right, so set the rotation to in-between 0 (Moving up) and 90 (Moving right) degrees, which is 45 degrees (Top-right).
     if(getVelocity().x > 75)
     {
 	    if(getVelocity().y > 75)
@@ -68,7 +75,7 @@ void PlayerPhysicsComponent::update(double dt)
 
 
     // Check the condition of both pressed key booleans. If one is false, it means that the player is not pressing a button
-    // to move in that axis, and so should slow down/stop moving in that direction, so dampen the velocity for that axis, while not
+    // to move in that axis, and so should slow down in that direction and eventually stop, so dampen the velocity for that axis while not
     // affecting the other axis.
     dampen({ (pressedKeyX) ? 1.0f : 0.7f, 
 				 (pressedKeyY) ? 1.0f : 0.7f});
@@ -81,29 +88,26 @@ void PlayerPhysicsComponent::update(double dt)
     if(abs(getVelocity().x) + abs(getVelocity().y) > 200) { _maxVelocity = { 141.8f, 141.8f }; }
     else { _maxVelocity = { 200, 200 }; }
 
-  // Clamp velocity.
-  auto v = getVelocity();
-  v.x = copysign(min(abs(v.x), _maxVelocity.x), v.x);
-  v.y = copysign(min(abs(v.y), _maxVelocity.y), v.y);
-  setVelocity(v);
+	// Clamp velocity.
+	auto v = getVelocity();
+	v.x = copysign(min(abs(v.x), _maxVelocity.x), v.x);
+	v.y = copysign(min(abs(v.y), _maxVelocity.y), v.y);
+	setVelocity(v);
 
-  PhysicsComponent::update(dt);
+	PhysicsComponent::update(dt);
 }
 
 PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p,
                                                const Vector2f& size)
     : PhysicsComponent(p, true, size) {
-  _size = sv2_to_bv2(size, true);
-  _maxVelocity = Vector2f(200.f, 200.f);
-  _groundspeed = 66.f;
-  _grounded = false;
-  _body->SetSleepingAllowed(false);
-  _body->SetFixedRotation(true);
-  //Bullet items have higher-res collision detection
-  _body->SetBullet(true);
-
-    // Minor friction for more rigid/less floaty controls
-  setFriction(0.2f);
-    // Top down game, so disable gravity.
-  _body->SetGravityScale(0);
+	_size = sv2_to_bv2(size, true);
+	_maxVelocity = Vector2f(200.f, 200.f);
+	_speed = 66.f;
+	_grounded = false;
+	_body->SetSleepingAllowed(false);
+	_body->SetFixedRotation(true);
+	//Bullet items have higher-res collision detection
+	_body->SetBullet(true);
+	// Minor friction for more rigid/less floaty controls
+	setFriction(0.2f);
 }

@@ -25,7 +25,7 @@ void TimerComponent::update(double dt)
 void TimerComponent::render() { Renderer::queue(_text.get()); }
 
 TimerComponent::TimerComponent(Entity* const p)
-    : Component(p), _currentTime(5.0f), _text(std::make_shared<sf::Text>())
+    : Component(p), _currentTime(20.0f), _text(std::make_shared<sf::Text>())
 {
 	_font = Resources::get<sf::Font>("RobotoMono-Regular.ttf");
     _text->setFont(*_font);
@@ -51,10 +51,10 @@ sf::Text& TimerComponent::GetTextObject()
 
 float TimerComponent::GetCurrentTime() { return _currentTime; }
 
-// Adds more time to the timer, called when the player retrieves a powerup or defeats an enemy.
-void TimerComponent::AddTime(float timeIncrease)
+// Add or subtract time (in seconds) onto the timer. Positive values = increase in time, negative values = decrease in time.
+void TimerComponent::ChangeTime(float timeChange)
 {
-    _currentTime += timeIncrease;
+    _currentTime += timeChange;
 }
 
 

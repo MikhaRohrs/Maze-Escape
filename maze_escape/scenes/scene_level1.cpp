@@ -35,6 +35,7 @@ void Level1Scene::Load() {
 
 	// Create player
 	player = makeEntity();
+	player->addTag("player");
     player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
 	playerShape = player->addComponent<ShapeComponent>();
     playerShape->setShape<sf::RectangleShape>(Vector2f(20.f, 20.f));
@@ -45,6 +46,7 @@ void Level1Scene::Load() {
 
     // Create timer text
     timer = makeEntity();
+	timer->addTag("timer");
     timerText = timer->addComponent<TimerComponent>();
     timerText->GetTextObject().setPosition({ 5, 0 });
 
@@ -110,7 +112,7 @@ void Level1Scene::Update(const double& dt)
 	// Also adds 10 seconds to the timer.
     if (!pickedUpWeapon && playerShape->getShape().getGlobalBounds().findIntersection(weaponShape->getShape().getGlobalBounds()))
 	{
-		timerText->AddTime(10.f);
+		timerText->ChangeTime(10.f);
 		weapon->setForDelete();
     	auto newWeapon = player->addComponent<PlayerWeaponComponent>();
 		pickedUpWeapon = true;

@@ -16,7 +16,7 @@ public:
 	void LowTimeFlash();
 	sf::Text& GetTextObject();
 	float GetCurrentTime();
-	void AddTime(float timeIncrease);
+	void ChangeTime(float timeIncrease);
 
 protected:
 	float _currentTime;

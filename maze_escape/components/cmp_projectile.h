@@ -2,9 +2,11 @@
 #include "cmp_physics.h"
 #include <ecm.h>
 
-class ProjectileComponent : public Component {
+class ProjectileComponent : public PhysicsComponent {
 protected:
   float _lifetime;
+  std::shared_ptr<Entity> _player;
+  std::shared_ptr<Entity> _timer;
 
 public:
   void update(double dt) override;
