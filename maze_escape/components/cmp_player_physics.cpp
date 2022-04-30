@@ -3,6 +3,7 @@
 #include "system_physics.h"
 #include <LevelSystem.h>
 #include <SFML/Window/Keyboard.hpp>
+#include "../game.h"
 
 using namespace std;
 using namespace sf;
@@ -19,22 +20,27 @@ void PlayerPhysicsComponent::update(double dt)
     //   - If pressed, check if current velocity in that direction exceeds the max velocity.
     //   - If linear velocity is under the max velocity, apply a impulse, scaled by the ground speed of the player.
     //   - Set pressed key bool to true (For the corresponding axis).
-    if(Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
+
+    // Left
+    if(Keyboard::isKeyPressed(CONTROLS[2]))
     {
         if (getVelocity().x > -_maxVelocity.x) { impulse({ -static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(270.f); }
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
+    // Right
+    if (Keyboard::isKeyPressed(CONTROLS[3]))
     {
         if (getVelocity().x < _maxVelocity.x) { impulse({ static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(90.f); }
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
+    // Up
+    if (Keyboard::isKeyPressed(CONTROLS[0]))
     {
         if (getVelocity().y > -_maxVelocity.y) { impulse({ 0, -static_cast<float>(dt * _speed) }); pressedKeyY = true; _parent->setRotation(180.f); }
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
+    // Down
+    if (Keyboard::isKeyPressed(CONTROLS[1]))
     {
         if (getVelocity().y < _maxVelocity.y) { impulse({ 0, static_cast<float>(dt * _speed) }); pressedKeyY = true; _parent->setRotation(0.f); }
     }

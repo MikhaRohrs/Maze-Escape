@@ -12,19 +12,22 @@ using namespace std;
 using namespace sf;
 
 
-// Player entity and attached shape component
+// Player entity
 static shared_ptr<Entity> player;
 static shared_ptr<ShapeComponent> playerShape;
 
-// Timer entity and attached timer component
+// Timer entity
 shared_ptr<TimerComponent> timerText;
 static shared_ptr<Entity> timer;
 
-// Weapon shape component, used to determine if the player picked it up
+// Weapon entity
 shared_ptr<Entity> weapon;
 static shared_ptr <ShapeComponent> weaponShape;
-
 bool pickedUpWeapon;
+
+// Speed powerup entity
+vector<shared_ptr<Entity>> speedPowerups;
+vector<shared_ptr<ShapeComponent>> speedPowerupShapes;
 
 void Level1Scene::Load() {
 	cout << " Scene 1 Load" << endl;
@@ -80,6 +83,24 @@ void Level1Scene::Load() {
 
     pickedUpWeapon = false;
 
+	// Create speed boost powerups
+	for(int i = 0; i < ls::findTiles(ls::POWERUP_SPEED).size(); i++)
+	{
+		auto powerupPos = ls::getTilePosition(ls::findTiles(ls::POWERUP_SPEED)[i]);
+
+		auto speedPowerup = makeEntity();
+		speedPowerup->setPosition(powerupPos);
+
+		auto speedPowerupShape = speedPowerup->addComponent<ShapeComponent>();
+		speedPowerupShape->setShape<sf::RectangleShape>(Vector2f(10.f, 20.f));
+		speedPowerupShape->getShape().setPosition(speedPowerup->getPosition());
+		speedPowerupShape->getShape().setFillColor(Color::Green);
+		speedPowerupShape->getShape().setOrigin(Vector2f(5.f, 10.f));
+
+		speedPowerups.push_back(speedPowerup);
+		speedPowerupShapes.push_back(speedPowerupShape);
+	}
+
 	// Simulate long loading times
 	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	cout << " Scene 1 Load Done" << endl;
@@ -97,6 +118,13 @@ void Level1Scene::UnLoad()
 	timerText.reset();
 	weaponShape.reset();
 	weapon.reset();
+	for( int i = 0; i < speedPowerups.size(); i++)
+	{
+		speedPowerups[i].reset();
+		speedPowerupShapes[i].reset();
+	}
+	speedPowerups.clear();
+	speedPowerupShapes.clear();
 	ls::unload();
 	Scene::UnLoad();
 }
@@ -116,6 +144,22 @@ void Level1Scene::Update(const double& dt)
 		weapon->setForDelete();
     	auto newWeapon = player->addComponent<PlayerWeaponComponent>();
 		pickedUpWeapon = true;
+	}
+
+	if (!speedPowerups.empty())
+	{
+		for (int i = 0; i < speedPowerups.size(); i++)
+		{
+			if (playerShape->getShape().getGlobalBounds().findIntersection(speedPowerupShapes[i]->getShape().getGlobalBounds()))
+			{
+				// temporarily give player speed component, remove it from him after some time.
+				// Component increases player speed multiplier and max speed by 150% for a duration.
+				timerText->ChangeTime(15.f);
+				speedPowerups[i]->setForDelete();
+				speedPowerups.erase(speedPowerups.begin() + i);
+				speedPowerupShapes.erase(speedPowerupShapes.begin() + i);
+			}
+		}
 	}
 
     // If the player runs out of time, end the game, player loses.
