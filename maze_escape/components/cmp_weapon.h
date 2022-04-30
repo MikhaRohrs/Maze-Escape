@@ -5,7 +5,7 @@
 
 class PlayerWeaponComponent : public Component {
 protected:
-	void Attack();
+	void Attack() const;
 	int _ammo;
 	float _cooldown = 1.f;
 

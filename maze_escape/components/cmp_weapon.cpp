@@ -23,7 +23,7 @@ void PlayerWeaponComponent::update(double dt)
 }
 
 // Launch a projectile in a given direction
-void PlayerWeaponComponent::Attack()
+void PlayerWeaponComponent::Attack() const
 {
     // Create projectile entity
     auto projectile = _parent->scene->makeEntity();
