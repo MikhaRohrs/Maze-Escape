@@ -13,7 +13,7 @@ class LevelSystem {
 public:
   static void loadLevelFile(const std::string&, float tileSize = 100.0f);
   static void unload();
-  static void render(sf::RenderWindow& window, sf::Vector2f playerPos);
+  static void render(sf::RenderWindow& window, sf::Vector2f playerPos, float renderRange);
 
   typedef unsigned char Tile;
 

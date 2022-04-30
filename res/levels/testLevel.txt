@@ -8,11 +8,11 @@ w  g                    w
 w    wwwwwwwwwwwwwww 1  w
 w    w      w     ww    w
 w    w      w     ww    w
-w    w      w     ww    w
+w 2  w      w     ww    w
 w    w      w           w
 w    w      wwwwwwwwww  w
 w    w          w  www  w
 w    w          w       w
 w    wwwwwwww   wwwwwwwww
-w                       w
+w 2               2     w
 wwwwwwwwwwwwwwwwwwwwwwwww

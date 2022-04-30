@@ -17,5 +17,8 @@ public:
 	PowerupManagerComponent() = delete;
 
 	void ActivateSpeedPowerup();
+	void ActivateMapPowerup();
 
+	bool IsSpeedPowerupActive() const;
+	bool IsMapPowerupActive() const;
 };

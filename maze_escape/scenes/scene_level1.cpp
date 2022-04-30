@@ -26,9 +26,19 @@ shared_ptr<Entity> weapon;
 static shared_ptr <ShapeComponent> weaponShape;
 bool pickedUpWeapon;
 
-// Speed powerup entity
+
+// todo: group all powerup entities to one list for efficiency and save on memory usage.
+// Speed powerup entities
 vector<shared_ptr<Entity>> speedPowerups;
 vector<shared_ptr<ShapeComponent>> speedPowerupShapes;
+
+// Map powerup entities
+vector<shared_ptr<Entity>> mapPowerups;
+vector<shared_ptr<ShapeComponent>> mapPowerupShapes;
+
+// Sight range of the player. Handled by powerup manager component, but better to keep a local copy of the current sight range
+// instead of accessing the component per frame on the render function.
+float renderRange;
 
 void Level1Scene::Load() {
 	cout << " Scene 1 Load" << endl;
@@ -103,6 +113,27 @@ void Level1Scene::Load() {
 		speedPowerupShapes.push_back(speedPowerupShape);
 	}
 
+	// Create map powerups
+	for (int i = 0; i < ls::findTiles(ls::POWERUP_MAP).size(); i++)
+	{
+		auto powerupPos = ls::getTilePosition(ls::findTiles(ls::POWERUP_MAP)[i]);
+
+		auto mapPowerup = makeEntity();
+		mapPowerup->setPosition(powerupPos);
+
+		auto mapPowerupShape = mapPowerup->addComponent<ShapeComponent>();
+		mapPowerupShape->setShape<sf::RectangleShape>(Vector2f(10.f, 20.f));
+		mapPowerupShape->getShape().setPosition(mapPowerup->getPosition());
+		mapPowerupShape->getShape().setFillColor(Color::Yellow);
+		mapPowerupShape->getShape().setOrigin(Vector2f(5.f, 10.f));
+
+		mapPowerups.push_back(mapPowerup);
+		mapPowerupShapes.push_back(mapPowerupShape);
+	}
+
+	// Set initial render / sight range to 150 (from the player).
+	renderRange = 150.f;
+
 	// Simulate long loading times
 	std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	cout << " Scene 1 Load Done" << endl;
@@ -120,6 +151,7 @@ void Level1Scene::UnLoad()
 	timerText.reset();
 	weaponShape.reset();
 	weapon.reset();
+
 	for( int i = 0; i < speedPowerups.size(); i++)
 	{
 		speedPowerups[i].reset();
@@ -127,6 +159,15 @@ void Level1Scene::UnLoad()
 	}
 	speedPowerups.clear();
 	speedPowerupShapes.clear();
+
+	for(int i = 0; i < mapPowerups.size(); i++)
+	{
+		mapPowerups[i].reset();
+		mapPowerupShapes[i].reset();
+	}
+	mapPowerups.clear();
+	mapPowerupShapes.clear();
+
 	ls::unload();
 	Scene::UnLoad();
 }
@@ -168,23 +209,43 @@ void Level1Scene::Update(const double& dt)
 		}
 	}
 
-    // If the player runs out of time, end the game, player loses.
-  if (timerText->GetCurrentTime() <= 0) { Engine::ChangeScene(&loseGame); }
-  Scene::Update(dt);
+	// Same implementation method as the speed powerup collision check above, but for the map powerup.
+	if(!mapPowerups.empty())
+	{
+		for(int i = 0; i < mapPowerups.size(); i++)
+		{
+			if(playerShape->getShape().getGlobalBounds().findIntersection(mapPowerupShapes[i]->getShape().getGlobalBounds()))
+			{
+				player->get_components<PowerupManagerComponent>()[0]->ActivateMapPowerup();
+				timerText->ChangeTime(-5.f);
+				mapPowerups[i]->setForDelete();
+				mapPowerups.erase(mapPowerups.begin() + i);
+				mapPowerupShapes.erase(mapPowerupShapes.begin() + i);
+			}
+		}
+	}
+
+	player->get_components<PowerupManagerComponent>()[0]->IsMapPowerupActive() ? renderRange = 450.f : renderRange = 150.f;
+
+	Scene::Update(dt);
+
+	// If the player runs out of time, end the game, player loses.
+	if (timerText->GetCurrentTime() <= 0) { Engine::ChangeScene(&loseGame); }
 }
 
-void Level1Scene::Render() {
+void Level1Scene::Render()
+{
 
-    // For each entity, check if it is at least 150 units or less away from the player. Render only entities that meet this criteria.
+    // For each entity, check if it's within the player's render range (normally 150, 450 with map powerup). Render entities that are within this radius.
     for each(std::shared_ptr<Entity> e in ents.list)
     {
         // Leave timer entity alone, as it should always be rendered.
         if (e == timer) { continue; }
         Vector2f playerDistance = e->getPosition() - player->getPosition();
 		playerDistance.x = abs(playerDistance.x); playerDistance.y = abs(playerDistance.y);
-        playerDistance.length() > 150 ? e->setVisible(false) : e->setVisible(true);
+        playerDistance.length() > renderRange ? e->setVisible(false) : e->setVisible(true);
     }
     
-	ls::render(Engine::GetWindow(), player->getPosition());
+	ls::render(Engine::GetWindow(), player->getPosition(), renderRange);
 	Scene::Render();
 }
