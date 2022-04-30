@@ -3,6 +3,7 @@
 #include "../components/cmp_sprite.h"
 #include "../components/cmp_timer.h"
 #include "../components/cmp_weapon.h"
+#include "../components/cmp_powerup_handler.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <iostream>
@@ -46,6 +47,7 @@ void Level1Scene::Load() {
     playerShape->getShape().setOrigin(Vector2f(10.f, 10.f));
 
     player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 20.f));
+	player->addComponent<PowerupManagerComponent>();
 
     // Create timer text
     timer = makeEntity();
@@ -146,15 +148,19 @@ void Level1Scene::Update(const double& dt)
 		pickedUpWeapon = true;
 	}
 
+	// Only do collision checks if there are no speed powerups remaining on the level for efficiency.
 	if (!speedPowerups.empty())
 	{
+		// For each speed powerup in the level, check for collision with the player. If there is a collision:
+		// - Activate the speed powerup for 10 seconds.
+		// - Remove that powerup from the level, as well as deleting that entity from the list of speed powerups in the level.
+		// - Subtract time as the cost of using the powerup.
 		for (int i = 0; i < speedPowerups.size(); i++)
 		{
 			if (playerShape->getShape().getGlobalBounds().findIntersection(speedPowerupShapes[i]->getShape().getGlobalBounds()))
 			{
-				// temporarily give player speed component, remove it from him after some time.
-				// Component increases player speed multiplier and max speed by 150% for a duration.
-				timerText->ChangeTime(15.f);
+				player->get_components<PowerupManagerComponent>()[0]->ActivateSpeedPowerup();
+				timerText->ChangeTime(-5.f);
 				speedPowerups[i]->setForDelete();
 				speedPowerups.erase(speedPowerups.begin() + i);
 				speedPowerupShapes.erase(speedPowerupShapes.begin() + i);

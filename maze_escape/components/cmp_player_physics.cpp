@@ -91,8 +91,8 @@ void PlayerPhysicsComponent::update(double dt)
     // to 200 / sqrt(2) to maintain consistent speed.
     //
     // If player speed no longer exceeds the normal max velocity of 200, set the max velocity back to 200.
-    if(abs(getVelocity().x) + abs(getVelocity().y) > 200) { _maxVelocity = { 141.8f, 141.8f }; }
-    else { _maxVelocity = { 200, 200 }; }
+    if(abs(getVelocity().x) + abs(getVelocity().y) > 200) { _maxVelocity = { _SpeedPowerupMultiplier * 141.8f, _SpeedPowerupMultiplier * 141.8f }; }
+    else { _maxVelocity = { _SpeedPowerupMultiplier * 200, _SpeedPowerupMultiplier * 200 }; }
 
 	// Clamp velocity.
 	auto v = getVelocity();
@@ -105,7 +105,7 @@ void PlayerPhysicsComponent::update(double dt)
 
 PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p,
                                                const Vector2f& size)
-    : PhysicsComponent(p, true, size) {
+    : PhysicsComponent(p, true, size), _SpeedPowerupMultiplier(1.f) {
 	_size = sv2_to_bv2(size, true);
 	_maxVelocity = Vector2f(200.f, 200.f);
 	_speed = 66.f;
