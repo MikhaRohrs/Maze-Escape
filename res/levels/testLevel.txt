@@ -4,7 +4,7 @@ w     wwwwwwww wwwwwwwwww
 w     wwwwwwww w       ww
 w     wwwwwwww w  wwww  w
 w     wwwwwwww w  wwwwwww
-w                       w
+w  g                    w
 w    wwwwwwwwwwwwwww    w
 w    w      w     ww    w
 w    w      w     ww    w

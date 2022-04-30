@@ -13,9 +13,10 @@ public:
 
 	~TimerComponent() override = default;
 
-	void LowTimeFlash();
-	sf::Text& GetTextObject();
-	float GetCurrentTime();
+	void LowTimeFlash() const;
+	sf::Text& GetTextObject() const;
+	float GetCurrentTime() const;
+	void ChangeTime(float timeChange);
 
 protected:
 	float _currentTime;

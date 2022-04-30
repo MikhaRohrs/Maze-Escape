@@ -7,7 +7,7 @@ protected:
   b2Vec2 _size;
   sf::Vector2f _maxVelocity;
   bool _grounded;
-  float _groundspeed;
+  float _speed;
 
   bool isGrounded() const;
 
