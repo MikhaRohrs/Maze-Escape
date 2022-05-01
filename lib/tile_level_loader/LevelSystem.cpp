@@ -4,9 +4,9 @@
 using namespace std;
 using namespace sf;
 
-sf::Texture wallTex;
-sf::Texture exitTex;
-sf::Texture transparentTex;
+sf::Texture LevelSystem::wallTex;
+sf::Texture LevelSystem::exitTex;
+sf::Texture LevelSystem::transparentTex;
 
 std::map<LevelSystem::Tile, sf::Color> LevelSystem::_colours
 {
@@ -206,8 +206,15 @@ void LevelSystem::buildSprites(bool optimise) {
     s->setSize(t.s);
     s->setFillColor(Color::Red);
     s->setFillColor(t.c);
-    s->setTexture(&wallTex);
-
+    //s->setTexture(&t.tex);
+    if (t.c == Color::White)
+    {
+        s->setTexture(&wallTex);
+    }
+    if (t.c == Color::Red)
+    {
+        s->setTexture(&exitTex);
+    }
     // s->setFillColor(Color(rand()%255,rand()%255,rand()%255));
     _sprites.push_back(move(s));
   }

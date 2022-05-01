@@ -60,6 +60,10 @@ protected:
   static size_t _height;
   static sf::Vector2f _offset;
 
+  static sf::Texture wallTex;
+  static sf::Texture exitTex;
+  static sf::Texture transparentTex;
+
   static std::vector<std::unique_ptr<sf::RectangleShape>> _sprites;
 
   static void buildSprites(bool optimise = false);
