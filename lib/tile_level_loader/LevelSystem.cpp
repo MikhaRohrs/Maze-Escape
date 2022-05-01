@@ -5,6 +5,8 @@ using namespace std;
 using namespace sf;
 
 sf::Texture wallTex;
+sf::Texture exitTex;
+sf::Texture transparentTex;
 
 std::map<LevelSystem::Tile, sf::Color> LevelSystem::_colours
 {
@@ -26,7 +28,8 @@ void LevelSystem::setColor(LevelSystem::Tile t, sf::Color c) {
 
 std::map < LevelSystem::Tile, sf::Texture > LevelSystem::textures
 {
-    {WALL, wallTex}
+    {WALL, wallTex},
+    {END, exitTex}
 };
 
 sf::Texture LevelSystem::GetTexture(Tile t)
@@ -34,7 +37,7 @@ sf::Texture LevelSystem::GetTexture(Tile t)
     auto it = textures.find(t);
     if(it == textures.end())
     {
-        textures[t] = wallTex;
+        textures[t] = transparentTex;
     }
     return textures[t];
 }
@@ -59,9 +62,17 @@ void LevelSystem::loadLevelFile(const std::string& path, float tileSize) {
   size_t w = 0, h = 0;
   string buffer;
 
-  if(!wallTex.loadFromFile("res/img/maze_sprite_sheet.png"))
+  if (!wallTex.loadFromFile("res/img/wall.png"))
   {
-      cout << "Couldnt find file\n";
+      cout << "Couldnt find file wall.png\n";
+  }
+  if (!exitTex.loadFromFile("res/img/exit.png"))
+  {
+      cout << "Couldnt find exit.png\n";
+  }
+  if (!transparentTex.loadFromFile("res/img/transparent.png"))
+  {
+      cout << "Couldnt find transparent.png\n";
   }
 
   // Load in file to buffer
@@ -195,8 +206,7 @@ void LevelSystem::buildSprites(bool optimise) {
     s->setSize(t.s);
     s->setFillColor(Color::Red);
     s->setFillColor(t.c);
-    //s->setTexture(make_shared<Texture>(t.tex));
-    //s->setTextureRect(IntRect(Vector2(0, 0), Vector2(32, 32)));
+    s->setTexture(&wallTex);
 
     // s->setFillColor(Color(rand()%255,rand()%255,rand()%255));
     _sprites.push_back(move(s));
