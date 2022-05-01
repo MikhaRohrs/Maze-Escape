@@ -14,23 +14,36 @@ static shared_ptr<Entity> player;
 shared_ptr<TimerComponent> timerText;
 static shared_ptr<Entity> timer;
 
+sf::Texture playerTexture;
+
 void Level1Scene::Load() {
   cout << " Scene 1 Load" << endl;
   ls::loadLevelFile("res/levels/testLevel.txt", 40.0f);
+
+  if (!playerTexture.loadFromFile("res/img/invaders_sheet.png"))
+  {
+      cout << "Could not load texture\n";
+  }
 
   auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
   ls::setOffset(Vector2f(0, ho));
 
   // Create player
   {
+      auto playerSize = Vector2f(20.0f, 30.0f);
       player = makeEntity();
       player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
       auto s = player->addComponent<ShapeComponent>();
-      s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
-      s->getShape().setFillColor(Color::Magenta);
-      s->getShape().setOrigin(Vector2f(10.f, 15.f));
+      s->setShape<sf::RectangleShape>(playerSize);
+      s->getShape().setFillColor(Color::Transparent);
+      s->getShape().setOrigin(playerSize / 2.0f);
 
-      player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+      player->addComponent<PlayerPhysicsComponent>(playerSize);
+
+      auto playerSprite = player->addComponent<SpriteComponent>();
+      playerSprite->setTexture(make_shared<Texture>(playerTexture));
+      playerSprite->setTextureRect(IntRect(Vector2(0, 0), Vector2(20, 30)));
+      playerSprite->setOrigin(s->getShape().getOrigin());
   }
     // Create timer text
     {

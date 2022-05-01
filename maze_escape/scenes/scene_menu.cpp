@@ -48,7 +48,7 @@ void MenuScene::Load()
 				Texts[i]->ChangeColor(Grey);
 			}
 			offset -= 50.0f;
-			MenuOptions[i]->setPosition(Vector2f(70.0f, GAME_HEIGHT - (GAME_HEIGHT + offset)));
+			MenuOptions[i]->setPosition(Vector2f(70.0f, gameHeight - (gameHeight + offset)));
 		}
 	}
 	setLoaded(true);

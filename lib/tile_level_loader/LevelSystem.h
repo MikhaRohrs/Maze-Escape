@@ -44,6 +44,10 @@ public:
 
   static void setColor(Tile t, sf::Color c);
 
+  static void SetTexture(Tile t, sf::Texture tex);
+
+  static sf::Texture GetTexture(Tile t);
+
   static void setOffset(const sf::Vector2f& _offset);
 
   static const sf::Vector2f& getOffset();
@@ -62,6 +66,7 @@ protected:
 
   static float _tileSize; // for rendering
   static std::map<Tile, sf::Color> _colours;
+  static std::map <Tile, sf::Texture> textures;
 
 private:
   LevelSystem() = delete;

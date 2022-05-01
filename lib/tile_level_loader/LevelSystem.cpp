@@ -4,8 +4,13 @@
 using namespace std;
 using namespace sf;
 
-std::map<LevelSystem::Tile, sf::Color> LevelSystem::_colours{
-    {WALL, Color::White}, {END, Color::Red}};
+sf::Texture wallTex;
+
+std::map<LevelSystem::Tile, sf::Color> LevelSystem::_colours
+{
+    {WALL, Color::White},
+	{END, Color::Red}
+};
 
 sf::Color LevelSystem::getColor(LevelSystem::Tile t) {
   auto it = _colours.find(t);
@@ -17,6 +22,27 @@ sf::Color LevelSystem::getColor(LevelSystem::Tile t) {
 
 void LevelSystem::setColor(LevelSystem::Tile t, sf::Color c) {
   _colours[t] = c;
+}
+
+std::map < LevelSystem::Tile, sf::Texture > LevelSystem::textures
+{
+    {WALL, wallTex}
+};
+
+sf::Texture LevelSystem::GetTexture(Tile t)
+{
+    auto it = textures.find(t);
+    if(it == textures.end())
+    {
+        textures[t] = wallTex;
+    }
+    return textures[t];
+}
+
+
+void LevelSystem::SetTexture(LevelSystem::Tile t, sf::Texture tex)
+{
+    textures[t] = tex;
 }
 
 std::unique_ptr<LevelSystem::Tile[]> LevelSystem::_tiles;
@@ -32,6 +58,11 @@ void LevelSystem::loadLevelFile(const std::string& path, float tileSize) {
   _tileSize = tileSize;
   size_t w = 0, h = 0;
   string buffer;
+
+  if(!wallTex.loadFromFile("res/img/invaders_sheet.png"))
+  {
+      cout << "Couldnt find file\n";
+  }
 
   // Load in file to buffer
   ifstream f(path);
@@ -82,6 +113,7 @@ void LevelSystem::buildSprites(bool optimise) {
     sf::Vector2f p;
     sf::Vector2f s;
     sf::Color c;
+    sf::Texture tex;
   };
   vector<tp> tps;
   const auto tls = Vector2f(_tileSize, _tileSize);
@@ -91,7 +123,7 @@ void LevelSystem::buildSprites(bool optimise) {
       if (t == EMPTY) {
         continue;
       }
-      tps.push_back({getTilePosition({x, y}), tls, getColor(t)});
+      tps.push_back({getTilePosition({x, y}), tls, getColor(t), GetTexture(t)});
     }
   }
 
@@ -163,6 +195,8 @@ void LevelSystem::buildSprites(bool optimise) {
     s->setSize(t.s);
     s->setFillColor(Color::Red);
     s->setFillColor(t.c);
+    //s->setTexture(make_shared<Texture>(t.tex));
+    //s->setTextureRect(IntRect(Vector2(0, 0), Vector2(32, 32)));
     // s->setFillColor(Color(rand()%255,rand()%255,rand()%255));
     _sprites.push_back(move(s));
   }

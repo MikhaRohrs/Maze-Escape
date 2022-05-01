@@ -19,6 +19,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIRECTORY})
 add_subdirectory("lib/sfml")
 set(SFML_INCS "lib/sfml/include")
 link_directories("${CMAKE_BINARY_DIR}/lib/sfml/lib")
+
 add_custom_target(copy_resources ALL COMMAND ${CMAKE_COMMAND} 
     -E copy_directory
     "${PROJECT_SOURCE_DIR}/res"

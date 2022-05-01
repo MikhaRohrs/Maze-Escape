@@ -5,12 +5,21 @@
 using namespace std;
 
 
-void SpriteComponent::setTexure(std::shared_ptr<sf::Texture> tex)
+void SpriteComponent::setTexture(std::shared_ptr<sf::Texture> tex)
 {
   _texture = tex;
   _sprite->setTexture(*_texture);
 }
 
+void SpriteComponent::setTextureRect(sf::IntRect rect)
+{
+    _sprite->setTextureRect(rect);
+}
+
+void SpriteComponent::setOrigin(sf::Vector2f origin)
+{
+    _sprite->setOrigin(origin);
+}
 
 SpriteComponent::SpriteComponent(Entity* p)
     : ::Component(p), _sprite(make_shared<sf::Sprite>()) {}
