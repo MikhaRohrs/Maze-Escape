@@ -20,7 +20,7 @@ void Level1Scene::Load() {
   cout << " Scene 1 Load" << endl;
   ls::loadLevelFile("res/levels/testLevel.txt", 40.0f);
 
-  if (!playerTexture.loadFromFile("res/img/invaders_sheet.png"))
+  if (!playerTexture.loadFromFile("res/img/maze_sprite_sheet.png"))
   {
       cout << "Could not load texture\n";
   }

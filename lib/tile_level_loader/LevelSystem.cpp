@@ -59,7 +59,7 @@ void LevelSystem::loadLevelFile(const std::string& path, float tileSize) {
   size_t w = 0, h = 0;
   string buffer;
 
-  if(!wallTex.loadFromFile("res/img/invaders_sheet.png"))
+  if(!wallTex.loadFromFile("res/img/maze_sprite_sheet.png"))
   {
       cout << "Couldnt find file\n";
   }
@@ -197,6 +197,7 @@ void LevelSystem::buildSprites(bool optimise) {
     s->setFillColor(t.c);
     //s->setTexture(make_shared<Texture>(t.tex));
     //s->setTextureRect(IntRect(Vector2(0, 0), Vector2(32, 32)));
+
     // s->setFillColor(Color(rand()%255,rand()%255,rand()%255));
     _sprites.push_back(move(s));
   }
