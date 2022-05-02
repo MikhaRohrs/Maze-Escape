@@ -42,7 +42,7 @@ void PowerupManagerComponent::ActivateSpeedPowerup()
 {
 	_speedPowerupCurrentDuration += 10.f;
 	_speedPowerupActive = true;
-	_parent->get_components<PlayerPhysicsComponent>()[0]->_SpeedPowerupMultiplier = 2.f;
+	_parent->get_components<PlayerPhysicsComponent>()[0]->_SpeedPowerupMultiplier = 2.5f;
 }
 
 // Activate the speed powerup:

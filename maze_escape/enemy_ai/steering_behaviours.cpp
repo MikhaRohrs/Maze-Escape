@@ -2,10 +2,11 @@
 
 using namespace sf;
 
-Steering SteeringSeek::getSteering() const noexcept
-{
-	Steering steering;
-	steering._direction = normalize(_targetEntity->getPosition() - _character->getPosition()) * _maxSpeed;
-	steering._rotation = 0.f;
-	return steering;
+SteeringOutput Seek::getSteering() const noexcept {
+    SteeringOutput steering;
+    steering.direction = _target->getPosition() - _character->getPosition();
+    steering.direction = normalize(steering.direction);
+    steering.direction *= _maxSpeed;
+    steering.rotation = 0.0f;
+    return steering;
 }

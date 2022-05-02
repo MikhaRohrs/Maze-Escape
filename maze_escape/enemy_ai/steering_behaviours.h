@@ -1,43 +1,32 @@
 #pragma once
 #include "engine.h"
 
-struct Steering
+struct SteeringOutput
 {
-	float _rotation;
-	sf::Vector2f _direction;
+	// Direction of travel.
+	sf::Vector2f direction;
+	// Rotation of travel.
+	float rotation;
 };
 
-class SteeringBehaviours
-{
+
+class SteeringBehaviour {
 public:
-	virtual Steering getSteering() const noexcept = 0;
+	virtual ~SteeringBehaviour() = default;
 
-	virtual ~SteeringBehaviours() = default;
+	// Gets the output from a steering behaviour.
+	virtual SteeringOutput getSteering() const noexcept = 0;
 };
 
 
-class SteeringSeek : public SteeringBehaviours
-{
-private:
-	Entity* _character;
-	Entity* _targetEntity;
-
-	float _maxSpeed;
-
-public:
-	SteeringSeek() = delete;
-	SteeringSeek(Entity* character, Entity* target, float maxSpeed) : _character(character), _targetEntity(target), _maxSpeed(maxSpeed) {}
-	Steering getSteering() const noexcept;
-};
-
-class SteeringFlee : public SteeringBehaviours {
+class Seek : public SteeringBehaviour {
 private:
 	Entity* _character;
 	Entity* _target;
 	float _maxSpeed;
 public:
-	SteeringFlee() = delete;
-	SteeringFlee(Entity* character, Entity* target, float maxSpeed)
+	Seek() = delete;
+	Seek(Entity* character, Entity* target, float maxSpeed)
 		: _character(character), _target(target), _maxSpeed(maxSpeed) { }
-	Steering getSteering() const noexcept;
+	SteeringOutput getSteering() const noexcept;
 };

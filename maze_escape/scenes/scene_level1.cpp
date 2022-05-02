@@ -168,34 +168,6 @@ void Level1Scene::Load() {
 		mapPowerupShapes.push_back(mapPowerupShape);
 	}
 
-	// Create map powerups
-	for (int i = 0; i < ls::findTiles(ls::POWERUP_AMMO).size(); i++)
-	{
-		auto powerupPos = ls::getTilePosition(ls::findTiles(ls::POWERUP_AMMO)[i]);
-
-		auto ammoPowerup = makeEntity();
-		ammoPowerup->setPosition(powerupPos);
-
-		auto ammoPowerupShape = ammoPowerup->addComponent<ShapeComponent>();
-		ammoPowerupShape->setShape<sf::RectangleShape>(Vector2f(10.f, 20.f));
-		ammoPowerupShape->getShape().setPosition(ammoPowerup->getPosition());
-		ammoPowerupShape->getShape().setFillColor(Color::White);
-		ammoPowerupShape->getShape().setOrigin(Vector2f(5.f, 10.f));
-
-		ammoPowerups.push_back(ammoPowerup);
-		ammoPowerupShapes.push_back(ammoPowerupShape);
-	}
-
-	anEnemy = makeEntity();
-	anEnemy->setPosition(Vector2f(player->getPosition() + Vector2f(50, 50)));
-	auto s = anEnemy->addComponent<ShapeComponent>();
-	s->setShape<RectangleShape>(Vector2f(10.f, 10.f));
-	s->getShape().setFillColor(Color::Cyan);
-
-	auto path = pathFind(Vector2i(0, 1),
-		Vector2i(player->getPosition()));
-	ai = anEnemy->addComponent<PathfindingComponent>();
-	auto w = anEnemy->addComponent<SteeringComponent>();
 
 	// Set initial render / sight range to 150 (from the player).
 	renderRange = 150.f;
@@ -233,13 +205,6 @@ void Level1Scene::UnLoad()
 	mapPowerups.clear();
 	mapPowerupShapes.clear();
 
-	for (int i = 0; i < ammoPowerups.size(); i++)
-	{
-		ammoPowerups[i].reset();
-		ammoPowerupShapes[i].reset();
-	}
-	ammoPowerups.clear();
-	ammoPowerupShapes.clear();
 
     playerSprite.reset();
 	ls::unload();
@@ -266,18 +231,6 @@ void Level1Scene::Update(const double& dt)
         playerSprite->setTextureRect(IntRect(Vector2(20, 0), Vector2(20, 30)));
 		pickedUpWeapon = true;
 	}
-	else
-	{
-		// If the player touches the weapon powerup, give the player a weapon and remove the powerup shape from the game, to prevent multiple weapons being picked up.
-		// Also adds 10 seconds to the timer.
-		if (!pickedUpWeapon && playerShape->getShape().getGlobalBounds().findIntersection(weaponShape->getShape().getGlobalBounds())
-			&& Keyboard::isKeyPressed(CONTROLS[4]))
-		{
-			timerText->ChangeTime(10.f);
-			weapon->setForDelete();
-			player->get_components<PlayerWeaponComponent>()[0]->_canFire = true;
-			pickedUpWeapon = true;
-		}
 
 		// Only do collision checks if there are no speed powerups remaining on the level for efficiency.
 		// Also, for all powerups, you must press the enter key to pickup the powerup, allowing the player to choose if they need the powerup
@@ -319,47 +272,13 @@ void Level1Scene::Update(const double& dt)
 			}
 		}
 
-		// Same implementation method as the speed powerup collision check above, but for the ammo powerup.
-		if (!ammoPowerups.empty())
-		{
-			for (int i = 0; i < ammoPowerups.size(); i++)
-			{
-				if (playerShape->getShape().getGlobalBounds().findIntersection(ammoPowerupShapes[i]->getShape().getGlobalBounds())
-					&& Keyboard::isKeyPressed(CONTROLS[4]))
-				{
-					player->get_components<PlayerWeaponComponent>()[0]->AddAmmo(10);
-					timerText->ChangeTime(-5.f);
-					ammoPowerups[i]->setForDelete();
-					ammoPowerups.erase(ammoPowerups.begin() + i);
-					ammoPowerupShapes.erase(ammoPowerupShapes.begin() + i);
-					ammoPowerupShapes.erase(ammoPowerupShapes.begin() + i);
-				}
-			}
-		}
-
 		player->get_components<PowerupManagerComponent>()[0]->IsMapPowerupActive() ? renderRange = 450.f : renderRange = 150.f;
-
-
-		if ((anEnemy->getPosition() - player->getPosition()).length() >= 50)
-		{
-			auto relative_pos = Vector2i(player->getPosition()) - Vector2i(ls::getOffset());
-			auto tile_coord = relative_pos / (int)ls::getTileSize();
-			if (ls::getTile(Vector2ul(tile_coord)) != ls::WALL)
-			{
-				auto char_relative = anEnemy->getPosition() - ls::getOffset();
-				auto char_tile = Vector2i(char_relative / ls::getTileSize());
-				auto path = pathFind(char_tile, tile_coord);
-				ai->setPath(path);
-			}
-		}
-
 
 		Scene::Update(dt);
 
 		// If the player runs out of time, end the game, player loses.
 		if (timerText->GetCurrentTime() <= 0) { Engine::ChangeScene(&loseGame); }
 	}
-}
 
 void Level1Scene::Render()
 {
