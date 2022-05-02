@@ -12,4 +12,8 @@ public:
 	void render() override {}
 	explicit PlayerWeaponComponent(Entity* p);
 	PlayerWeaponComponent() = delete;
+
+	void AddAmmo(int ammoIncrease);
+
+	bool _canFire;
 };

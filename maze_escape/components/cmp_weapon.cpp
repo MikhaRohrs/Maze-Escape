@@ -12,7 +12,7 @@ using namespace sf;
 void PlayerWeaponComponent::update(double dt)
 {
     // If the spacebar is fired, decrement ammo and generate a new projectile. 1 second cooldown per attack.
-    if(Keyboard::isKeyPressed(Keyboard::Space) && _cooldown <= 0)
+    if(_canFire && _cooldown <= 0.f && _ammo > 0 && Keyboard::isKeyPressed(Keyboard::Space))
     {
         _cooldown = 1.f;
         Attack();
@@ -86,4 +86,9 @@ void PlayerWeaponComponent::Attack() const
     physics->impulse(facingDirection * Vector2f{.8f, .8f});
 }
 
-PlayerWeaponComponent::PlayerWeaponComponent(Entity* p) : Component(p), _ammo(10), _cooldown(0.f) {}
+PlayerWeaponComponent::PlayerWeaponComponent(Entity* p) : Component(p), _ammo(10), _cooldown(0.f), _canFire(false) {}
+
+void PlayerWeaponComponent::AddAmmo(const int ammoIncrease)
+{
+    _ammo += ammoIncrease;
+}

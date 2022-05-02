@@ -87,13 +87,6 @@ void Level2Scene::UnLoad() {
 }
 
 void Level2Scene::Update(const double& dt) {
-  Scene::Update(dt);
-  const auto pp = player->getPosition();
-  if (ls::getTileAt(pp) == ls::END) {
-    Engine::ChangeScene((Scene*)&level3);
-  } else if (!player->isAlive()) {
-    Engine::ChangeScene((Scene*)&level2);
-  }
 }
 
 void Level2Scene::Render() {

@@ -3,8 +3,8 @@ w  s  wwwwwwww        e w
 w     wwwwwwww wwwwwwwwww
 w     wwwwwwww w       ww
 w     wwwwwwww w  www 1 w
-w     wwwwwwww w  wwwwwww
-w  g                    w
+w  3  wwwwwwww w  wwwwwww
+w  g       3            w
 w    wwwwwwwwwwwwwww 1  w
 w    w      w     ww    w
 w    w      w     ww    w
@@ -14,5 +14,5 @@ w    w      wwwwwwwwww  w
 w    w          w  www  w
 w    w          w       w
 w    wwwwwwww   wwwwwwwww
-w 2               2     w
+w 2        3      2     w
 wwwwwwwwwwwwwwwwwwwwwwwww

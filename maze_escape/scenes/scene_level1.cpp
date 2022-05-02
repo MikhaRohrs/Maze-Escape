@@ -8,6 +8,7 @@
 #include <LevelSystem.h>
 #include <iostream>
 #include <thread>
+#include "SFML/Window/Keyboard.hpp"
 
 using namespace std;
 using namespace sf;
@@ -27,7 +28,6 @@ static shared_ptr <ShapeComponent> weaponShape;
 bool pickedUpWeapon;
 
 
-// todo: group all powerup entities to one list for efficiency and save on memory usage.
 // Speed powerup entities
 vector<shared_ptr<Entity>> speedPowerups;
 vector<shared_ptr<ShapeComponent>> speedPowerupShapes;
@@ -35,6 +35,10 @@ vector<shared_ptr<ShapeComponent>> speedPowerupShapes;
 // Map powerup entities
 vector<shared_ptr<Entity>> mapPowerups;
 vector<shared_ptr<ShapeComponent>> mapPowerupShapes;
+
+// Ammo Refill powerup entities
+vector<shared_ptr<Entity>> ammoPowerups;
+vector<shared_ptr<ShapeComponent>> ammoPowerupShapes;
 
 // Sight range of the player. Handled by powerup manager component, but better to keep a local copy of the current sight range
 // instead of accessing the component per frame on the render function.
@@ -58,6 +62,7 @@ void Level1Scene::Load() {
 
     player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 20.f));
 	player->addComponent<PowerupManagerComponent>();
+	player->addComponent<PlayerWeaponComponent>();
 
     // Create timer text
     timer = makeEntity();
@@ -131,6 +136,24 @@ void Level1Scene::Load() {
 		mapPowerupShapes.push_back(mapPowerupShape);
 	}
 
+	// Create map powerups
+	for (int i = 0; i < ls::findTiles(ls::POWERUP_AMMO).size(); i++)
+	{
+		auto powerupPos = ls::getTilePosition(ls::findTiles(ls::POWERUP_AMMO)[i]);
+
+		auto ammoPowerup = makeEntity();
+		ammoPowerup->setPosition(powerupPos);
+
+		auto ammoPowerupShape = ammoPowerup->addComponent<ShapeComponent>();
+		ammoPowerupShape->setShape<sf::RectangleShape>(Vector2f(10.f, 20.f));
+		ammoPowerupShape->getShape().setPosition(ammoPowerup->getPosition());
+		ammoPowerupShape->getShape().setFillColor(Color::White);
+		ammoPowerupShape->getShape().setOrigin(Vector2f(5.f, 10.f));
+
+		ammoPowerups.push_back(ammoPowerup);
+		ammoPowerupShapes.push_back(ammoPowerupShape);
+	}
+
 	// Set initial render / sight range to 150 (from the player).
 	renderRange = 150.f;
 
@@ -168,69 +191,101 @@ void Level1Scene::UnLoad()
 	mapPowerups.clear();
 	mapPowerupShapes.clear();
 
+	for (int i = 0; i < ammoPowerups.size(); i++)
+	{
+		ammoPowerups[i].reset();
+		ammoPowerupShapes[i].reset();
+	}
+	ammoPowerups.clear();
+	ammoPowerupShapes.clear();
+
 	ls::unload();
 	Scene::UnLoad();
 }
 
 void Level1Scene::Update(const double& dt)
 {
-    if (ls::getTileAt(player->getPosition()) == ls::END) 
-    {
-        Engine::ChangeScene((Scene*)&level2);
-    }
-
-    // If the player touches the weapon powerup, give the player a weapon and remove the powerup shape from the game, to prevent multiple weapons being picked up.
-	// Also adds 10 seconds to the timer.
-    if (!pickedUpWeapon && playerShape->getShape().getGlobalBounds().findIntersection(weaponShape->getShape().getGlobalBounds()))
+	if (ls::getTileAt(player->getPosition()) == ls::END)
 	{
-		timerText->ChangeTime(10.f);
-		weapon->setForDelete();
-    	auto newWeapon = player->addComponent<PlayerWeaponComponent>();
-		pickedUpWeapon = true;
+		Engine::ChangeScene((Scene*)&loseGame);
 	}
-
-	// Only do collision checks if there are no speed powerups remaining on the level for efficiency.
-	if (!speedPowerups.empty())
+	else
 	{
-		// For each speed powerup in the level, check for collision with the player. If there is a collision:
-		// - Activate the speed powerup for 10 seconds.
-		// - Remove that powerup from the level, as well as deleting that entity from the list of speed powerups in the level.
-		// - Subtract time as the cost of using the powerup.
-		for (int i = 0; i < speedPowerups.size(); i++)
+		// If the player touches the weapon powerup, give the player a weapon and remove the powerup shape from the game, to prevent multiple weapons being picked up.
+		// Also adds 10 seconds to the timer.
+		if (!pickedUpWeapon && playerShape->getShape().getGlobalBounds().findIntersection(weaponShape->getShape().getGlobalBounds())
+			&& Keyboard::isKeyPressed(CONTROLS[4]))
 		{
-			if (playerShape->getShape().getGlobalBounds().findIntersection(speedPowerupShapes[i]->getShape().getGlobalBounds()))
+			timerText->ChangeTime(10.f);
+			weapon->setForDelete();
+			player->get_components<PlayerWeaponComponent>()[0]->_canFire = true;
+			pickedUpWeapon = true;
+		}
+
+		// Only do collision checks if there are no speed powerups remaining on the level for efficiency.
+		// Also, for all powerups, you must press the enter key to pickup the powerup, allowing the player to choose if they need the powerup
+		// or if they can beat the level with a higher time score.
+		if (!speedPowerups.empty())
+		{
+			// For each speed powerup in the level, check for collision with the player. If there is a collision:
+			// - Activate the speed powerup for 10 seconds.
+			// - Remove that powerup from the level, as well as deleting that entity from the list of speed powerups in the level.
+			// - Subtract time as the cost of using the powerup.
+			for (int i = 0; i < speedPowerups.size(); i++)
 			{
-				player->get_components<PowerupManagerComponent>()[0]->ActivateSpeedPowerup();
-				timerText->ChangeTime(-5.f);
-				speedPowerups[i]->setForDelete();
-				speedPowerups.erase(speedPowerups.begin() + i);
-				speedPowerupShapes.erase(speedPowerupShapes.begin() + i);
+				if (playerShape->getShape().getGlobalBounds().findIntersection(speedPowerupShapes[i]->getShape().getGlobalBounds())
+					&& Keyboard::isKeyPressed(CONTROLS[4]))
+				{
+					player->get_components<PowerupManagerComponent>()[0]->ActivateSpeedPowerup();
+					timerText->ChangeTime(-5.f);
+					speedPowerups[i]->setForDelete();
+					speedPowerups.erase(speedPowerups.begin() + i);
+					speedPowerupShapes.erase(speedPowerupShapes.begin() + i);
+				}
 			}
 		}
-	}
 
-	// Same implementation method as the speed powerup collision check above, but for the map powerup.
-	if(!mapPowerups.empty())
-	{
-		for(int i = 0; i < mapPowerups.size(); i++)
+		// Same implementation method as the speed powerup collision check above, but for the map powerup.
+		if (!mapPowerups.empty())
 		{
-			if(playerShape->getShape().getGlobalBounds().findIntersection(mapPowerupShapes[i]->getShape().getGlobalBounds()))
+			for (int i = 0; i < mapPowerups.size(); i++)
 			{
-				player->get_components<PowerupManagerComponent>()[0]->ActivateMapPowerup();
-				timerText->ChangeTime(-5.f);
-				mapPowerups[i]->setForDelete();
-				mapPowerups.erase(mapPowerups.begin() + i);
-				mapPowerupShapes.erase(mapPowerupShapes.begin() + i);
+				if (playerShape->getShape().getGlobalBounds().findIntersection(mapPowerupShapes[i]->getShape().getGlobalBounds())
+					&& Keyboard::isKeyPressed(CONTROLS[4]))
+				{
+					player->get_components<PowerupManagerComponent>()[0]->ActivateMapPowerup();
+					timerText->ChangeTime(-5.f);
+					mapPowerups[i]->setForDelete();
+					mapPowerups.erase(mapPowerups.begin() + i);
+					mapPowerupShapes.erase(mapPowerupShapes.begin() + i);
+				}
 			}
 		}
+
+		// Same implementation method as the speed powerup collision check above, but for the ammo powerup.
+		if (!ammoPowerups.empty())
+		{
+			for (int i = 0; i < ammoPowerups.size(); i++)
+			{
+				if (playerShape->getShape().getGlobalBounds().findIntersection(ammoPowerupShapes[i]->getShape().getGlobalBounds())
+					&& Keyboard::isKeyPressed(CONTROLS[4]))
+				{
+					player->get_components<PlayerWeaponComponent>()[0]->AddAmmo(10);
+					timerText->ChangeTime(-5.f);
+					ammoPowerups[i]->setForDelete();
+					ammoPowerups.erase(ammoPowerups.begin() + i);
+					ammoPowerupShapes.erase(ammoPowerupShapes.begin() + i);
+				}
+			}
+		}
+
+		player->get_components<PowerupManagerComponent>()[0]->IsMapPowerupActive() ? renderRange = 450.f : renderRange = 150.f;
+
+		Scene::Update(dt);
+
+		// If the player runs out of time, end the game, player loses.
+		if (timerText->GetCurrentTime() <= 0) { Engine::ChangeScene(&loseGame); }
 	}
-
-	player->get_components<PowerupManagerComponent>()[0]->IsMapPowerupActive() ? renderRange = 450.f : renderRange = 150.f;
-
-	Scene::Update(dt);
-
-	// If the player runs out of time, end the game, player loses.
-	if (timerText->GetCurrentTime() <= 0) { Engine::ChangeScene(&loseGame); }
 }
 
 void Level1Scene::Render()
