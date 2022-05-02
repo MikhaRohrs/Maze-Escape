@@ -27,6 +27,8 @@ shared_ptr<Entity> weapon;
 static shared_ptr <ShapeComponent> weaponShape;
 bool pickedUpWeapon;
 
+sf::Texture playerTexture;
+
 
 // Speed powerup entities
 vector<shared_ptr<Entity>> speedPowerups;
@@ -57,10 +59,22 @@ void Level1Scene::Load() {
     player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
 	playerShape = player->addComponent<ShapeComponent>();
     playerShape->setShape<sf::RectangleShape>(Vector2f(20.f, 20.f));
-    playerShape->getShape().setFillColor(Color::Magenta);
+    playerShape->getShape().setFillColor(Color::Transparent);
     playerShape->getShape().setOrigin(Vector2f(10.f, 10.f));
 
     player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 20.f));
+
+	if (!playerTexture.loadFromFile("res/img/maze_sprite_sheet.png"))
+	{
+		cout << "Could not load texture\n";
+	}
+
+	auto playerSprite = player->addComponent<SpriteComponent>();
+	playerSprite->setTexture(make_shared<Texture>(playerTexture));
+	playerSprite->setTextureRect(IntRect(Vector2(0, 0), Vector2(20, 30)));
+	playerSprite->setOrigin(playerShape->getShape().getOrigin());
+	playerSprite->setOrigin(playerShape->getShape().getOrigin());
+
 	player->addComponent<PowerupManagerComponent>();
 	player->addComponent<PlayerWeaponComponent>();
 
