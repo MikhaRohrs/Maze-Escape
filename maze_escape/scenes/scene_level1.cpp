@@ -20,31 +20,18 @@ static shared_ptr<ShapeComponent> playerShape;
 shared_ptr<TimerComponent> timerText;
 static shared_ptr<Entity> timer;
 
-<<<<<<< HEAD
 // Weapon shape component, used to determine if the player picked it up
 shared_ptr<Entity> weapon;
 static shared_ptr <ShapeComponent> weaponShape;
 
 bool pickedUpWeapon;
+
 sf::Texture playerTexture;
 
-void Level1Scene::Load() {
+void Level1Scene::Load()
+{
 	cout << " Scene 1 Load" << endl;
 	ls::loadLevelFile("res/levels/testLevel.txt", 40.0f);
-
-	auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
-	ls::setOffset(Vector2f(0, ho));
-
-	// Create player
-	player = makeEntity();
-	player->addTag("player");
-    player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-	playerShape = player->addComponent<ShapeComponent>();
-    playerShape->setShape<sf::RectangleShape>(Vector2f(20.f, 20.f));
-    playerShape->getShape().setFillColor(Color::Magenta);
-    playerShape->getShape().setOrigin(Vector2f(10.f, 10.f));
-
-    player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 20.f));
 
   if (!playerTexture.loadFromFile("res/img/maze_sprite_sheet.png"))
   {
@@ -56,21 +43,22 @@ void Level1Scene::Load() {
 
   // Create player
   {
-      auto playerSize = Vector2f(20.0f, 30.0f);
       player = makeEntity();
+      player->addTag("player");
       player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-      auto s = player->addComponent<ShapeComponent>();
-      s->setShape<sf::RectangleShape>(playerSize);
-      s->getShape().setFillColor(Color::Transparent);
-      s->getShape().setOrigin(playerSize / 2.0f);
+      playerShape = player->addComponent<ShapeComponent>();
+      playerShape->setShape<sf::RectangleShape>(Vector2f(20.f, 20.f));
+      playerShape->getShape().setFillColor(Color::Transparent);
+      playerShape->getShape().setOrigin(Vector2f(10.f, 10.f));
 
-      player->addComponent<PlayerPhysicsComponent>(playerSize);
+      player->addComponent<PlayerPhysicsComponent>(Vector2f(20.0f, 20.0f));
 
       auto playerSprite = player->addComponent<SpriteComponent>();
       playerSprite->setTexture(make_shared<Texture>(playerTexture));
       playerSprite->setTextureRect(IntRect(Vector2(0, 0), Vector2(20, 30)));
-      playerSprite->setOrigin(s->getShape().getOrigin());
+      playerSprite->setOrigin(playerShape->getShape().getOrigin());
   }
+
     // Create timer text
     timer = makeEntity();
 	timer->addTag("timer");

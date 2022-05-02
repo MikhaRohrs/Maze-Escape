@@ -4,8 +4,7 @@
 using namespace std;
 using namespace sf;
 
-std::map<LevelSystem::Tile, sf::Color> LevelSystem::_colours{
-    {WALL, Color::White}, {END, Color::Red} };
+
 sf::Texture LevelSystem::wallTex;
 sf::Texture LevelSystem::exitTex;
 sf::Texture LevelSystem::transparentTex;
@@ -136,7 +135,6 @@ void LevelSystem::buildSprites(bool optimise) {
       if (t == EMPTY) {
         continue;
       }
-      tps.push_back({getTilePosition({x, y}), tls, getColor(t)});
       tps.push_back({getTilePosition({x, y}), tls, getColor(t), GetTexture(t)});
     }
   }
