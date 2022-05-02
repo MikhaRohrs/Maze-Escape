@@ -36,7 +36,7 @@ void MenuScene::Load()
 		SelectedOption = 0;
 
 		const auto title = makeEntity();
-  		auto titleText = title->addComponent<TextComponent>("Maze Escape");
+  		auto titleText = title->addComponent<TextComponent>("Maze Escape (By Group B)");
 
 		float offset = 0.0f;
 		for (int i = 0; i < numOfOptions; i++)

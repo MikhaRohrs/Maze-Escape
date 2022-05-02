@@ -20,7 +20,7 @@ static float loadTextOpacity = 0.f; // Rapidly increments/decrement between 50 a
 static float loadingTime = 0.f; // Time taken so far to load the next scene.
 static bool gainingOpacity = true; // Bool that tracks if the opacity of the loading text should be incrementing or decrementing.
 
-static RectangleShape loadingBar(Vector2f(100, 10)); // Create the bar (Doing this outside the render function to prevent initializing this object per frame.
+static RectangleShape loadingBar(Vector2f(100, 60)); // Create the bar (Doing this outside the render function to prevent initializing this object per frame.
 static Text t("L O A D I N G . . .", *Resources::get<sf::Font>("RobotoMono-Regular.ttf")); // Loading text object with pre-defined font.
 
 //RenderWindow* _window; // Game window.
@@ -55,15 +55,15 @@ void Loading_update(float dt, const Scene* const scn) {
  */
 void Loading_render() {
     // Set loading bar position, scale it equal to 10 * loading time (Bar moves to the right, acting as a loading bar).
-	loadingBar.setPosition(Vector2f(0, Engine::getWindowSize().y));
+	loadingBar.setPosition(Vector2f(0, Engine::getWindowSize().y + 50));
     loadingBar.setOrigin(Vector2f(50, 10));
-    loadingBar.setScale(Vector2f(10 * loadingTime, 1));
+    loadingBar.setScale(Vector2f(15 * loadingTime, 1.f));
 	loadingBar.setFillColor(Color::Red);
 
     // Set text fill colour, character size and position.
 	t.setFillColor(Color(255,255,255, loadTextOpacity));
 	t.setCharacterSize(40);
-	t.setPosition(Vector2f(Engine::getWindowSize().x * 0.3, Engine::getWindowSize().y * 0.7));
+	t.setPosition(Vector2f(Engine::getWindowSize().x * 0.4, Engine::getWindowSize().y * 0.7));
 
     // Queue the loading text and bar to the system renderer.
 	Renderer::queue(&t);
