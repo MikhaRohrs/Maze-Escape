@@ -14,10 +14,10 @@ std::map<LevelSystem::Tile, sf::Color> LevelSystem::_colours
 {
     {WALL, Color::White},
 	{END, Color::Red},
-    {WEAPON, Color::Black},
+    /*{WEAPON, Color::Black},
     {POWERUP_SPEED, Color::Blue},
     {POWERUP_MAP, Color::Cyan},
-    {POWERUP_AMMO, Color::Green}
+    {POWERUP_AMMO, Color::Green}*/
 };
 
 sf::Color LevelSystem::getColor(LevelSystem::Tile t) {

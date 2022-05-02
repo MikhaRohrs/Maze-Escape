@@ -35,3 +35,6 @@ inline sf::Keyboard::Key CONTROLS[5] =
 	sf::Keyboard::D, // 3 - RIGHT
 	sf::Keyboard::Enter // 4 - INTERACT or SELECT
 };
+
+inline int selectedLevel = 1;
+

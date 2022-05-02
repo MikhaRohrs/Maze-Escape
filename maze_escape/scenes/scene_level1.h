@@ -1,6 +1,7 @@
 #pragma once
 
 #include "engine.h"
+#include "../components/cmp_sprite.h"
 
 class Level1Scene : public Scene {
 public:
@@ -11,4 +12,5 @@ public:
   void Update(const double& dt) override;
 
   void Render() override;
+
 };
