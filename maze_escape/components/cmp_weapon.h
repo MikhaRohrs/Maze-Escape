@@ -1,6 +1,4 @@
 #pragma once
-#pragma once
-#include "cmp_physics.h"
 #include <ecm.h>
 
 class PlayerWeaponComponent : public Component {
@@ -14,4 +12,8 @@ public:
 	void render() override {}
 	explicit PlayerWeaponComponent(Entity* p);
 	PlayerWeaponComponent() = delete;
+
+	void AddAmmo(int ammoIncrease);
+
+	bool _canFire;
 };

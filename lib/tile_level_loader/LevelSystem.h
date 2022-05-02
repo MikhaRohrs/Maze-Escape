@@ -13,18 +13,21 @@ class LevelSystem {
 public:
   static void loadLevelFile(const std::string&, float tileSize = 100.0f);
   static void unload();
-  static void render(sf::RenderWindow& window, sf::Vector2f playerPos);
+  static void render(sf::RenderWindow& window, sf::Vector2f playerPos, float renderRange);
 
   typedef unsigned char Tile;
 
   enum TILES {
-    EMPTY = ' ',
-    START = 's',
-    END = 'e',
-    WALL = 'w',
-    ENEMY = 'n',
-    WAYPOINT = '+',
-    WEAPON = 'g',
+      EMPTY = ' ',
+      START = 's',
+      END = 'e',
+      WALL = 'w',
+      ENEMY = 'n',
+      WAYPOINT = '+',
+      WEAPON = 'g',
+      POWERUP_SPEED = '1',
+      POWERUP_MAP = '2',
+      POWERUP_AMMO = '3'
   };
 
   static Tile getTile(sf::Vector2ul);

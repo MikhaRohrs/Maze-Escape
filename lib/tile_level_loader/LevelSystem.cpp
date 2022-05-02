@@ -225,7 +225,7 @@ void LevelSystem::buildSprites(bool optimise) {
 }
 
 
-void LevelSystem::render(sf::RenderWindow& window, Vector2f playerPos)
+void LevelSystem::render(sf::RenderWindow& window, Vector2f playerPos, float renderRange)
 {
   for (auto& t : _sprites) 
   {
@@ -233,7 +233,7 @@ void LevelSystem::render(sf::RenderWindow& window, Vector2f playerPos)
       Vector2f playerDistance = (t->getPosition() - playerPos);
       playerDistance.x = abs(playerDistance.x); playerDistance.y = abs(playerDistance.y);
 
-    if(playerDistance.length() <= 150)
+    if(playerDistance.length() <= renderRange)
     {
         window.draw(*t);
     }
