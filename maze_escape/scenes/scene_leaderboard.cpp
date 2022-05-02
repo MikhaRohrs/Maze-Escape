@@ -19,6 +19,7 @@ void LeaderBoard::ReadLeaderboardFile()
 	file.open(leaderBoardLocation);
 	if(!file.is_open())
 	{
+		cout << "Leaderboard file not found\n";
 		return;
 	}
 
@@ -52,7 +53,7 @@ void LeaderBoard::Load()
 		{
 			auto empty = makeEntity();
 			auto emptyText = empty->addComponent<TextComponent>("No scores yet");
-			empty->setPosition(Vector2f(70.0f, GAME_HEIGHT - (GAME_HEIGHT - 50.0f)));
+			empty->setPosition(Vector2f(70.0f, gameHeight - (gameHeight - 50.0f)));
 		}
 		else
 		{
@@ -63,7 +64,7 @@ void LeaderBoard::Load()
 			}
 			auto score = makeEntity();
 			auto scoreText = score->addComponent<TextComponent>(fullString);
-			score->setPosition(Vector2f(70.0f, GAME_HEIGHT - (GAME_HEIGHT - 50.0f)));
+			score->setPosition(Vector2f(70.0f, gameHeight - (gameHeight - 50.0f)));
 		}
 
 
@@ -84,7 +85,7 @@ void LeaderBoard::Load()
 				Texts[i]->ChangeColor(Grey);
 			}
 			offset -= 50.0f;
-			MenuOptions[i]->setPosition(Vector2f(70.0f, GAME_HEIGHT - (GAME_HEIGHT + offset)));
+			MenuOptions[i]->setPosition(Vector2f(70.0f, gameHeight - (gameHeight + offset)));
 		}
 	}
 	setLoaded(true);

@@ -45,6 +45,10 @@ public:
 
   static void setColor(Tile t, sf::Color c);
 
+  static void SetTexture(Tile t, sf::Texture tex);
+
+  static sf::Texture GetTexture(Tile t);
+
   static void setOffset(const sf::Vector2f& _offset);
 
   static const sf::Vector2f& getOffset();
@@ -57,12 +61,17 @@ protected:
   static size_t _height;
   static sf::Vector2f _offset;
 
+  static sf::Texture wallTex;
+  static sf::Texture exitTex;
+  static sf::Texture transparentTex;
+
   static std::vector<std::unique_ptr<sf::RectangleShape>> _sprites;
 
   static void buildSprites(bool optimise = false);
 
   static float _tileSize; // for rendering
   static std::map<Tile, sf::Color> _colours;
+  static std::map <Tile, sf::Texture> textures;
 
 private:
   LevelSystem() = delete;

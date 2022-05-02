@@ -6,6 +6,15 @@ using namespace sf;
 
 std::map<LevelSystem::Tile, sf::Color> LevelSystem::_colours{
     {WALL, Color::White}, {END, Color::Red} };
+sf::Texture LevelSystem::wallTex;
+sf::Texture LevelSystem::exitTex;
+sf::Texture LevelSystem::transparentTex;
+
+std::map<LevelSystem::Tile, sf::Color> LevelSystem::_colours
+{
+    {WALL, Color::White},
+	{END, Color::Red}
+};
 
 sf::Color LevelSystem::getColor(LevelSystem::Tile t) {
   auto it = _colours.find(t);
@@ -17,6 +26,28 @@ sf::Color LevelSystem::getColor(LevelSystem::Tile t) {
 
 void LevelSystem::setColor(LevelSystem::Tile t, sf::Color c) {
   _colours[t] = c;
+}
+
+std::map < LevelSystem::Tile, sf::Texture > LevelSystem::textures
+{
+    {WALL, wallTex},
+    {END, exitTex}
+};
+
+sf::Texture LevelSystem::GetTexture(Tile t)
+{
+    auto it = textures.find(t);
+    if(it == textures.end())
+    {
+        textures[t] = transparentTex;
+    }
+    return textures[t];
+}
+
+
+void LevelSystem::SetTexture(LevelSystem::Tile t, sf::Texture tex)
+{
+    textures[t] = tex;
 }
 
 std::unique_ptr<LevelSystem::Tile[]> LevelSystem::_tiles;
@@ -32,6 +63,19 @@ void LevelSystem::loadLevelFile(const std::string& path, float tileSize) {
   _tileSize = tileSize;
   size_t w = 0, h = 0;
   string buffer;
+
+  if (!wallTex.loadFromFile("res/img/wall.png"))
+  {
+      cout << "Couldnt find file wall.png\n";
+  }
+  if (!exitTex.loadFromFile("res/img/exit.png"))
+  {
+      cout << "Couldnt find exit.png\n";
+  }
+  if (!transparentTex.loadFromFile("res/img/transparent.png"))
+  {
+      cout << "Couldnt find transparent.png\n";
+  }
 
   // Load in file to buffer
   ifstream f(path);
@@ -82,6 +126,7 @@ void LevelSystem::buildSprites(bool optimise) {
     sf::Vector2f p;
     sf::Vector2f s;
     sf::Color c;
+    sf::Texture tex;
   };
   vector<tp> tps;
   const auto tls = Vector2f(_tileSize, _tileSize);
@@ -92,6 +137,7 @@ void LevelSystem::buildSprites(bool optimise) {
         continue;
       }
       tps.push_back({getTilePosition({x, y}), tls, getColor(t)});
+      tps.push_back({getTilePosition({x, y}), tls, getColor(t), GetTexture(t)});
     }
   }
 
@@ -163,6 +209,15 @@ void LevelSystem::buildSprites(bool optimise) {
     s->setSize(t.s);
     s->setFillColor(Color::Red);
     s->setFillColor(t.c);
+    //s->setTexture(&t.tex);
+    if (t.c == Color::White)
+    {
+        s->setTexture(&wallTex);
+    }
+    if (t.c == Color::Red)
+    {
+        s->setTexture(&exitTex);
+    }
     // s->setFillColor(Color(rand()%255,rand()%255,rand()%255));
     _sprites.push_back(move(s));
   }

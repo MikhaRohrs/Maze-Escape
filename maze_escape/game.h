@@ -22,8 +22,8 @@ extern Options optionScene;
 extern LevelSelect levelSelect;
 extern ControlOptions controlOptions;
 
-constexpr uint16_t GAME_WIDTH = 1920;
-constexpr uint16_t GAME_HEIGHT = 1080;
+inline uint16_t gameWidth;
+inline uint16_t gameHeight;
 
 inline bool soundEnabled = true;
 
