@@ -32,6 +32,9 @@ void LeaderBoard::ReadLeaderboardFile()
 		ScoreList.push_back(line);
 	}
 
+	sort(ScoreList.begin(), ScoreList.end());
+	reverse(ScoreList.begin(), ScoreList.end());
+
 	file.close();
 }
 

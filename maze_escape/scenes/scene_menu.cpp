@@ -32,7 +32,7 @@ void MenuScene::Load()
 	cout << "Menu Load \n";
 	{
 		constexpr int numOfOptions = 4;
-		const string optionTexts[numOfOptions] = { "Start", "Leaderboard", "Options", "Exit" };
+		const string optionTexts[numOfOptions] = { "Start", "Leaderboard", "Controls", "Exit" };
 		SelectedOption = 0;
 
 		const auto title = makeEntity();
@@ -90,7 +90,7 @@ void MenuScene::Update(const double& dt)
 			Engine::ChangeScene(&leaderBoard);
 			break;
 		case 2: // MenuOptions
-			Engine::ChangeScene(&optionScene);
+			Engine::ChangeScene(&controlOptions);
 			break;
 		case 3: // Exit
 			Engine::GetWindow().close();

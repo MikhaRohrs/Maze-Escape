@@ -8,11 +8,16 @@ using namespace sf;
 sf::Texture LevelSystem::wallTex;
 sf::Texture LevelSystem::exitTex;
 sf::Texture LevelSystem::transparentTex;
+sf::Texture LevelSystem::spriteSheet;
 
 std::map<LevelSystem::Tile, sf::Color> LevelSystem::_colours
 {
     {WALL, Color::White},
-	{END, Color::Red}
+	{END, Color::Red},
+    {WEAPON, Color::Black},
+    {POWERUP_SPEED, Color::Blue},
+    {POWERUP_MAP, Color::Cyan},
+    {POWERUP_AMMO, Color::Green}
 };
 
 sf::Color LevelSystem::getColor(LevelSystem::Tile t) {
@@ -74,6 +79,10 @@ void LevelSystem::loadLevelFile(const std::string& path, float tileSize) {
   if (!transparentTex.loadFromFile("res/img/transparent.png"))
   {
       cout << "Couldnt find transparent.png\n";
+  }
+  if (!spriteSheet.loadFromFile("res/img/maze_player_sheet.png"))
+  {
+      cout << "Couldnt find maze_player_sheet.png\n";
   }
 
   // Load in file to buffer
@@ -212,10 +221,30 @@ void LevelSystem::buildSprites(bool optimise) {
     {
         s->setTexture(&wallTex);
     }
-    if (t.c == Color::Red)
+    else if (t.c == Color::Red)
     {
         s->setTexture(&exitTex);
+        s->setFillColor(Color::White);
     }
+    /*else if (t.c == Color::Black)
+    {
+        s->setTexture(&spriteSheet);
+        s->setTextureRect(IntRect(Vector2(76, 0), Vector2(10, 10)));
+        s->setFillColor(Color::White);
+    }
+    else if (t.c == Color::Blue)
+    {
+	    
+    }
+    else if (t.c == Color::Cyan)
+    {
+	    
+    }
+    else if (t.c == Color::Green)
+    {
+	    
+    }*/
+
     // s->setFillColor(Color(rand()%255,rand()%255,rand()%255));
     _sprites.push_back(move(s));
   }

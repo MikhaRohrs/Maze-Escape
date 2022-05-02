@@ -25,6 +25,9 @@ public:
     ENEMY = 'n',
     WAYPOINT = '+',
     WEAPON = 'g',
+    POWERUP_SPEED = '1',
+    POWERUP_MAP = '2',
+    POWERUP_AMMO = '3'
   };
 
   static Tile getTile(sf::Vector2ul);
@@ -64,6 +67,7 @@ protected:
   static sf::Texture wallTex;
   static sf::Texture exitTex;
   static sf::Texture transparentTex;
+  static sf::Texture spriteSheet;
 
   static std::vector<std::unique_ptr<sf::RectangleShape>> _sprites;
 

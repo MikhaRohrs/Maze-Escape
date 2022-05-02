@@ -1,4 +1,7 @@
 #include "scene_level1.h"
+
+#include <fstream>
+
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_sprite.h"
 #include "../components/cmp_timer.h"
@@ -26,14 +29,15 @@ static shared_ptr <ShapeComponent> weaponShape;
 
 bool pickedUpWeapon;
 
-sf::Texture playerTexture;
+Texture playerTexture;
+shared_ptr<SpriteComponent> playerSprite;
 
 void Level1Scene::Load()
 {
 	cout << " Scene 1 Load" << endl;
 	ls::loadLevelFile("res/levels/testLevel.txt", 40.0f);
 
-  if (!playerTexture.loadFromFile("res/img/maze_sprite_sheet.png"))
+  if (!playerTexture.loadFromFile("res/img/maze_player_sheet.png"))
   {
       cout << "Could not load texture\n";
   }
@@ -53,10 +57,11 @@ void Level1Scene::Load()
 
       player->addComponent<PlayerPhysicsComponent>(Vector2f(20.0f, 20.0f));
 
-      auto playerSprite = player->addComponent<SpriteComponent>();
+      playerSprite = player->addComponent<SpriteComponent>();
       playerSprite->setTexture(make_shared<Texture>(playerTexture));
       playerSprite->setTextureRect(IntRect(Vector2(0, 0), Vector2(20, 30)));
       playerSprite->setOrigin(playerShape->getShape().getOrigin());
+      playerSprite->getSprite().scale(Vector2f(2, 2));
   }
 
     // Create timer text
@@ -90,8 +95,15 @@ void Level1Scene::Load()
 	weaponShape = weapon->addComponent<ShapeComponent>();
 	weaponShape->setShape<sf::RectangleShape>(Vector2f(20.f, 40.f));
 	weaponShape->getShape().setPosition(weapon->getPosition());
-	weaponShape->getShape().setFillColor(Color::Cyan);
+	weaponShape->getShape().setFillColor(Color::Transparent);
 	weaponShape->getShape().setOrigin(Vector2f(10.f, 20.f));
+
+    auto weaponSprite = weapon->addComponent<SpriteComponent>();
+    weaponSprite->setTexture(make_shared<Texture>(playerTexture));
+    weaponSprite->setTextureRect(IntRect(Vector2(76, 0), Vector2(10, 10)));
+    weaponSprite->setOrigin(Vector2f(5.0f, 5.0f));
+    weaponSprite->getSprite().scale(Vector2f(3, 3));
+
 
     pickedUpWeapon = false;
 
@@ -112,6 +124,7 @@ void Level1Scene::UnLoad()
 	timerText.reset();
 	weaponShape.reset();
 	weapon.reset();
+    playerSprite.reset();
 	ls::unload();
 	Scene::UnLoad();
 }
@@ -120,6 +133,9 @@ void Level1Scene::Update(const double& dt)
 {
     if (ls::getTileAt(player->getPosition()) == ls::END) 
     {
+        ofstream leaderBoardFile;
+        leaderBoardFile.open("res/Leaderboard.txt");
+        leaderBoardFile << to_string(timerText->GetCurrentTime()) << endl;
         Engine::ChangeScene((Scene*)&level2);
     }
 
@@ -130,6 +146,7 @@ void Level1Scene::Update(const double& dt)
 		timerText->ChangeTime(10.f);
 		weapon->setForDelete();
     	auto newWeapon = player->addComponent<PlayerWeaponComponent>();
+        playerSprite->setTextureRect(IntRect(Vector2(20, 0), Vector2(20, 30)));
 		pickedUpWeapon = true;
 	}
 

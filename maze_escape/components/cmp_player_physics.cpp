@@ -1,6 +1,7 @@
 #include "ecm.h"
 #include "cmp_player_physics.h"
 #include "system_physics.h"
+#include "../game.h"
 #include <LevelSystem.h>
 #include <SFML/Window/Keyboard.hpp>
 
@@ -19,22 +20,22 @@ void PlayerPhysicsComponent::update(double dt)
     //   - If pressed, check if current velocity in that direction exceeds the max velocity.
     //   - If linear velocity is under the max velocity, apply a impulse, scaled by the ground speed of the player.
     //   - Set pressed key bool to true (For the corresponding axis).
-    if(Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
+    if(Keyboard::isKeyPressed(CONTROLS[2]))
     {
-        if (getVelocity().x > -_maxVelocity.x) { impulse({ -static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(270.f); }
+        if (getVelocity().x > -_maxVelocity.x) { impulse({ -static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(90.f); }
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
+    if (Keyboard::isKeyPressed(CONTROLS[3]))
     {
-        if (getVelocity().x < _maxVelocity.x) { impulse({ static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(90.f); }
+        if (getVelocity().x < _maxVelocity.x) { impulse({ static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(270.f); }
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
+    if (Keyboard::isKeyPressed(CONTROLS[0]))
     {
         if (getVelocity().y > -_maxVelocity.y) { impulse({ 0, -static_cast<float>(dt * _speed) }); pressedKeyY = true; _parent->setRotation(180.f); }
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
+    if (Keyboard::isKeyPressed(CONTROLS[1]))
     {
         if (getVelocity().y < _maxVelocity.y) { impulse({ 0, static_cast<float>(dt * _speed) }); pressedKeyY = true; _parent->setRotation(0.f); }
     }
@@ -51,12 +52,12 @@ void PlayerPhysicsComponent::update(double dt)
 	    if(getVelocity().y > 75)
 	    {
 		    // Top right
-            _parent->setRotation(45.f);
+            _parent->setRotation(225.f);
 	    }
         else if (getVelocity().y < -75)
         {
 	        // Bottom right
-            _parent->setRotation(135.f);
+            _parent->setRotation(315.f);
         }
     }
     else if(getVelocity().x < -75)
@@ -64,12 +65,12 @@ void PlayerPhysicsComponent::update(double dt)
 	    if(getVelocity().y > 75)
 	    {
 		    // Top left
-            _parent->setRotation(315.f);
+            _parent->setRotation(135.f);
 	    }
         else if(getVelocity().y < -75)
         {
 	        // Bottom left
-            _parent->setRotation(225.f);
+            _parent->setRotation(45.f);
         }
     }
 

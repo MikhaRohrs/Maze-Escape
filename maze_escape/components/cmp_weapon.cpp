@@ -69,7 +69,7 @@ void PlayerWeaponComponent::Attack() const
     // Create shape component of the projectile, setup visuals of the projectile.
     auto shape = projectile->addComponent<ShapeComponent>();
     shape->setShape<sf::RectangleShape>(sf::Vector2f(4.f, 4.f));
-    shape->getShape().setFillColor(Color::Blue);
+    shape->getShape().setFillColor(sf::Color(100, 100, 100, 255));
     shape->getShape().setOutlineColor(Color::Black);
     shape->getShape().setOutlineThickness(2);
     shape->getShape().setOrigin(Vector2f(2.f, 2.f));
