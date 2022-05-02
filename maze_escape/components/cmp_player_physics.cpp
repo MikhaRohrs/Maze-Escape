@@ -1,6 +1,7 @@
 #include "ecm.h"
 #include "cmp_player_physics.h"
 #include "system_physics.h"
+#include "../game.h"
 #include <LevelSystem.h>
 #include <SFML/Window/Keyboard.hpp>
 #include "../game.h"
@@ -24,13 +25,13 @@ void PlayerPhysicsComponent::update(double dt)
     // Left
     if(Keyboard::isKeyPressed(CONTROLS[2]))
     {
-        if (getVelocity().x > -_maxVelocity.x) { impulse({ -static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(270.f); }
+        if (getVelocity().x > -_maxVelocity.x) { impulse({ -static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(90.f); }
     }
 
     // Right
     if (Keyboard::isKeyPressed(CONTROLS[3]))
     {
-        if (getVelocity().x < _maxVelocity.x) { impulse({ static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(90.f); }
+        if (getVelocity().x < _maxVelocity.x) { impulse({ static_cast<float>(dt * _speed), 0 }); pressedKeyX = true; _parent->setRotation(270.f); }
     }
 
     // Up
@@ -57,12 +58,12 @@ void PlayerPhysicsComponent::update(double dt)
 	    if(getVelocity().y > 75)
 	    {
 		    // Top right
-            _parent->setRotation(45.f);
+            _parent->setRotation(225.f);
 	    }
         else if (getVelocity().y < -75)
         {
 	        // Bottom right
-            _parent->setRotation(135.f);
+            _parent->setRotation(315.f);
         }
     }
     else if(getVelocity().x < -75)
@@ -70,12 +71,12 @@ void PlayerPhysicsComponent::update(double dt)
 	    if(getVelocity().y > 75)
 	    {
 		    // Top left
-            _parent->setRotation(315.f);
+            _parent->setRotation(135.f);
 	    }
         else if(getVelocity().y < -75)
         {
 	        // Bottom left
-            _parent->setRotation(225.f);
+            _parent->setRotation(45.f);
         }
     }
 

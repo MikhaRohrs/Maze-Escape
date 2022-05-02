@@ -1,4 +1,7 @@
 #include "scene_level1.h"
+
+#include <fstream>
+
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_sprite.h"
 #include "../components/cmp_timer.h"
@@ -27,6 +30,8 @@ shared_ptr<Entity> weapon;
 static shared_ptr <ShapeComponent> weaponShape;
 bool pickedUpWeapon;
 
+Texture playerTexture;
+shared_ptr<SpriteComponent> playerSprite;
 
 // Speed powerup entities
 vector<shared_ptr<Entity>> speedPowerups;
@@ -51,18 +56,31 @@ void Level1Scene::Load() {
 	auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
 	ls::setOffset(Vector2f(0, ho));
 
-	// Create player
-	player = makeEntity();
-	player->addTag("player");
-    player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-	playerShape = player->addComponent<ShapeComponent>();
-    playerShape->setShape<sf::RectangleShape>(Vector2f(20.f, 20.f));
-    playerShape->getShape().setFillColor(Color::Magenta);
-    playerShape->getShape().setOrigin(Vector2f(10.f, 10.f));
+	if (!playerTexture.loadFromFile("res/img/maze_player_sheet.png"))
+	{
+	      cout << "Could not load texture\n";
+	}
 
-    player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 20.f));
-	player->addComponent<PowerupManagerComponent>();
-	player->addComponent<PlayerWeaponComponent>();
+  // Create player
+  {
+      player = makeEntity();
+      player->addTag("player");
+      player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+      playerShape = player->addComponent<ShapeComponent>();
+      playerShape->setShape<sf::RectangleShape>(Vector2f(20.f, 20.f));
+      playerShape->getShape().setFillColor(Color::Transparent);
+      playerShape->getShape().setOrigin(Vector2f(10.f, 10.f));
+
+      player->addComponent<PlayerPhysicsComponent>(Vector2f(20.0f, 20.0f));
+	  player->addComponent<PowerupManagerComponent>();
+	  player->addComponent<PlayerWeaponComponent>();
+
+      playerSprite = player->addComponent<SpriteComponent>();
+      playerSprite->setTexture(make_shared<Texture>(playerTexture));
+      playerSprite->setTextureRect(IntRect(Vector2(0, 0), Vector2(20, 30)));
+      playerSprite->setOrigin(playerShape->getShape().getOrigin());
+      playerSprite->getSprite().scale(Vector2f(2, 2));
+  }
 
     // Create timer text
     timer = makeEntity();
@@ -95,8 +113,15 @@ void Level1Scene::Load() {
 	weaponShape = weapon->addComponent<ShapeComponent>();
 	weaponShape->setShape<sf::RectangleShape>(Vector2f(20.f, 40.f));
 	weaponShape->getShape().setPosition(weapon->getPosition());
-	weaponShape->getShape().setFillColor(Color::Cyan);
+	weaponShape->getShape().setFillColor(Color::Transparent);
 	weaponShape->getShape().setOrigin(Vector2f(10.f, 20.f));
+
+    auto weaponSprite = weapon->addComponent<SpriteComponent>();
+    weaponSprite->setTexture(make_shared<Texture>(playerTexture));
+    weaponSprite->setTextureRect(IntRect(Vector2(76, 0), Vector2(10, 10)));
+    weaponSprite->setOrigin(Vector2f(5.0f, 5.0f));
+    weaponSprite->getSprite().scale(Vector2f(3, 3));
+
 
     pickedUpWeapon = false;
 
@@ -174,7 +199,6 @@ void Level1Scene::UnLoad()
 	timerText.reset();
 	weaponShape.reset();
 	weapon.reset();
-
 	for( int i = 0; i < speedPowerups.size(); i++)
 	{
 		speedPowerups[i].reset();
@@ -199,15 +223,30 @@ void Level1Scene::UnLoad()
 	ammoPowerups.clear();
 	ammoPowerupShapes.clear();
 
+    playerSprite.reset();
 	ls::unload();
 	Scene::UnLoad();
 }
 
 void Level1Scene::Update(const double& dt)
 {
-	if (ls::getTileAt(player->getPosition()) == ls::END)
+    if (ls::getTileAt(player->getPosition()) == ls::END) 
+    {
+        ofstream leaderBoardFile;
+        leaderBoardFile.open("res/Leaderboard.txt");
+        leaderBoardFile << to_string(timerText->GetCurrentTime()) << endl;
+        Engine::ChangeScene((Scene*)&level2);
+    }
+
+    // If the player touches the weapon powerup, give the player a weapon and remove the powerup shape from the game, to prevent multiple weapons being picked up.
+	// Also adds 10 seconds to the timer.
+    if (!pickedUpWeapon && playerShape->getShape().getGlobalBounds().findIntersection(weaponShape->getShape().getGlobalBounds()))
 	{
-		Engine::ChangeScene((Scene*)&loseGame);
+		timerText->ChangeTime(10.f);
+		weapon->setForDelete();
+    	auto newWeapon = player->addComponent<PlayerWeaponComponent>();
+        playerSprite->setTextureRect(IntRect(Vector2(20, 0), Vector2(20, 30)));
+		pickedUpWeapon = true;
 	}
 	else
 	{

@@ -167,7 +167,7 @@ void ControlOptions::Load()
 		SelectedOption = 0;
 
 		const auto title = makeEntity();
-		auto titleText = title->addComponent<TextComponent>("Maze Escape/Options/Remap Controls\n Select a control you would like to rebind,\n then within 3 seconds press the key you would like to rebind it to.");
+		auto titleText = title->addComponent<TextComponent>("Maze Escape/Remap Controls\n Select a control you would like to rebind,\n then within 3 seconds press the key you would like to rebind it to.");
 
 		float offset = -80.0f;
 		for (int i = 0; i < numOfOptions; i++)
@@ -234,7 +234,7 @@ void ControlOptions::Update(const double& dt)
 		case 6: // Back to options
 			MenuOptions.clear();
 			Texts.clear();
-			Engine::ChangeScene(&optionScene);
+			Engine::ChangeScene(&menu);
 			break;
 		default:
 			break;

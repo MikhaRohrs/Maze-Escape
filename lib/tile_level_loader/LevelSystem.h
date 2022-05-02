@@ -18,16 +18,16 @@ public:
   typedef unsigned char Tile;
 
   enum TILES {
-      EMPTY = ' ',
-      START = 's',
-      END = 'e',
-      WALL = 'w',
-      ENEMY = 'n',
-      WAYPOINT = '+',
-      WEAPON = 'g',
-      POWERUP_SPEED = '1',
-      POWERUP_MAP = '2',
-      POWERUP_AMMO = '3'
+    EMPTY = ' ',
+    START = 's',
+    END = 'e',
+    WALL = 'w',
+    ENEMY = 'n',
+    WAYPOINT = '+',
+    WEAPON = 'g',
+    POWERUP_SPEED = '1',
+    POWERUP_MAP = '2',
+    POWERUP_AMMO = '3'
   };
 
   static Tile getTile(sf::Vector2ul);
@@ -67,6 +67,7 @@ protected:
   static sf::Texture wallTex;
   static sf::Texture exitTex;
   static sf::Texture transparentTex;
+  static sf::Texture spriteSheet;
 
   static std::vector<std::unique_ptr<sf::RectangleShape>> _sprites;
 

@@ -13,8 +13,8 @@ void LevelSelect::Load()
 {
 	cout << "Level select load\n";
 	{
-		constexpr int numOfOptions = 2;
-		const string optionTexts[numOfOptions] = { "Level 1", "Back" };
+		constexpr int numOfOptions = 4;
+		const string optionTexts[numOfOptions] = { "Level 1", "Level 2", "Level 3", "Back" };
 		SelectedOption = 0;
 
 		const auto title = makeEntity();
@@ -68,7 +68,13 @@ void LevelSelect::Update(const double& dt)
 		case 0: // Level 1
 			Engine::ChangeScene(&level1);
 			break;
-		case 1: // Main menu
+		case 1: // Level 2
+			Engine::ChangeScene(&level2);
+			break;
+		case 2: // Level 3
+			Engine::ChangeScene(&level3);
+			break;
+		case 3: // Menu
 			Engine::ChangeScene(&menu);
 			break;
 		default:
