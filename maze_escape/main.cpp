@@ -23,7 +23,7 @@ int main()
 
 	gameWidth = sf::VideoMode::getDesktopMode().width;
 	gameHeight = sf::VideoMode::getDesktopMode().height;
-
+	selectedLevel = 1;
     //Engine::Start(GAME_WIDTH[CURRENT_RES], GAME_HEIGHT[CURRENT_RES], "Maze Escape", &menu);
     Engine::Start(gameWidth, gameHeight, "Maze Escape", &menu);
 }

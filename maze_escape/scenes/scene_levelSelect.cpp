@@ -66,13 +66,16 @@ void LevelSelect::Update(const double& dt)
 		switch (SelectedOption)
 		{
 		case 0: // Level 1
+			selectedLevel = 1;
 			Engine::ChangeScene(&level1);
 			break;
 		case 1: // Level 2
-			Engine::ChangeScene(&level2);
+			selectedLevel = 2;
+			Engine::ChangeScene(&level1);
 			break;
 		case 2: // Level 3
-			Engine::ChangeScene(&level3);
+			selectedLevel = 3;
+			Engine::ChangeScene(&level1);
 			break;
 		case 3: // Menu
 			Engine::ChangeScene(&menu);

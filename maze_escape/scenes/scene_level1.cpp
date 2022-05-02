@@ -19,11 +19,6 @@
 using namespace std;
 using namespace sf;
 
-
-shared_ptr<Entity> anEnemy;
-shared_ptr<PathfindingComponent> ai;
-
-
 // Player entity
 static shared_ptr<Entity> player;
 static shared_ptr<ShapeComponent> playerShape;
@@ -37,9 +32,6 @@ shared_ptr<Entity> weapon;
 static shared_ptr <ShapeComponent> weaponShape;
 bool pickedUpWeapon;
 
-Texture playerTexture;
-shared_ptr<SpriteComponent> playerSprite;
-
 // Speed powerup entities
 vector<shared_ptr<Entity>> speedPowerups;
 vector<shared_ptr<ShapeComponent>> speedPowerupShapes;
@@ -52,13 +44,28 @@ vector<shared_ptr<ShapeComponent>> mapPowerupShapes;
 vector<shared_ptr<Entity>> ammoPowerups;
 vector<shared_ptr<ShapeComponent>> ammoPowerupShapes;
 
+sf::Texture playerTexture;
+std::shared_ptr<SpriteComponent> playerSprite;
+
 // Sight range of the player. Handled by powerup manager component, but better to keep a local copy of the current sight range
 // instead of accessing the component per frame on the render function.
 float renderRange;
 
 void Level1Scene::Load() {
 	cout << " Scene 1 Load" << endl;
-	ls::loadLevelFile("res/levels/testLevel.txt", 40.0f);
+
+	if(selectedLevel == 1)
+	{
+		ls::loadLevelFile("res/levels/testLevel.txt", 40.0f);
+	}
+	else if (selectedLevel == 2)
+	{
+		ls::loadLevelFile("res/levels/testLevel2.txt", 40.0f);
+	}
+	else if (selectedLevel == 3)
+	{
+		ls::loadLevelFile("res/levels/testLevel3.txt", 40.0f);
+	}
 
 	auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
 	ls::setOffset(Vector2f(0, ho));
@@ -143,8 +150,15 @@ void Level1Scene::Load() {
 		auto speedPowerupShape = speedPowerup->addComponent<ShapeComponent>();
 		speedPowerupShape->setShape<sf::RectangleShape>(Vector2f(10.f, 20.f));
 		speedPowerupShape->getShape().setPosition(speedPowerup->getPosition());
-		speedPowerupShape->getShape().setFillColor(Color::Green);
+		speedPowerupShape->getShape().setFillColor(Color::Transparent);
 		speedPowerupShape->getShape().setOrigin(Vector2f(5.f, 10.f));
+
+		auto speedSprite = speedPowerup->addComponent<SpriteComponent>();
+		speedSprite->setTexture(make_shared<Texture>(playerTexture));
+		speedSprite->setTextureRect(IntRect(Vector2(94, 0), Vector2(10, 10)));
+		speedSprite->setOrigin(Vector2f(5.0f, 5.0f));
+		speedSprite->getSprite().scale(Vector2f(3, 3));
+
 
 		speedPowerups.push_back(speedPowerup);
 		speedPowerupShapes.push_back(speedPowerupShape);
@@ -161,8 +175,14 @@ void Level1Scene::Load() {
 		auto mapPowerupShape = mapPowerup->addComponent<ShapeComponent>();
 		mapPowerupShape->setShape<sf::RectangleShape>(Vector2f(10.f, 20.f));
 		mapPowerupShape->getShape().setPosition(mapPowerup->getPosition());
-		mapPowerupShape->getShape().setFillColor(Color::Yellow);
+		mapPowerupShape->getShape().setFillColor(Color::Transparent);
 		mapPowerupShape->getShape().setOrigin(Vector2f(5.f, 10.f));
+
+		auto mapSprite = mapPowerup->addComponent<SpriteComponent>();
+		mapSprite->setTexture(make_shared<Texture>(playerTexture));
+		mapSprite->setTextureRect(IntRect(Vector2(85, 0), Vector2(10, 10)));
+		mapSprite->setOrigin(Vector2f(5.0f, 5.0f));
+		mapSprite->getSprite().scale(Vector2f(3, 3));
 
 		mapPowerups.push_back(mapPowerup);
 		mapPowerupShapes.push_back(mapPowerupShape);
@@ -179,23 +199,29 @@ void Level1Scene::Load() {
 		auto ammoPowerupShape = ammoPowerup->addComponent<ShapeComponent>();
 		ammoPowerupShape->setShape<sf::RectangleShape>(Vector2f(10.f, 20.f));
 		ammoPowerupShape->getShape().setPosition(ammoPowerup->getPosition());
-		ammoPowerupShape->getShape().setFillColor(Color::White);
+		ammoPowerupShape->getShape().setFillColor(Color::Transparent);
 		ammoPowerupShape->getShape().setOrigin(Vector2f(5.f, 10.f));
+
+		auto ammoSprite = ammoPowerup->addComponent<SpriteComponent>();
+		ammoSprite->setTexture(make_shared<Texture>(playerTexture));
+		ammoSprite->setTextureRect(IntRect(Vector2(104, 0), Vector2(10, 10)));
+		ammoSprite->setOrigin(Vector2f(5.0f, 5.0f));
+		ammoSprite->getSprite().scale(Vector2f(3, 3));
 
 		ammoPowerups.push_back(ammoPowerup);
 		ammoPowerupShapes.push_back(ammoPowerupShape);
 	}
 
-	anEnemy = makeEntity();
+	/*anEnemy = makeEntity();
 	anEnemy->setPosition(Vector2f(player->getPosition() + Vector2f(50, 50)));
 	auto s = anEnemy->addComponent<ShapeComponent>();
 	s->setShape<RectangleShape>(Vector2f(10.f, 10.f));
-	s->getShape().setFillColor(Color::Cyan);
+	s->getShape().setFillColor(Color::Cyan);*/
 
-	auto path = pathFind(Vector2i(0, 1),
+	/*auto path = pathFind(Vector2i(0, 1),
 		Vector2i(player->getPosition()));
 	ai = anEnemy->addComponent<PathfindingComponent>();
-	auto w = anEnemy->addComponent<SteeringComponent>();
+	auto w = anEnemy->addComponent<SteeringComponent>();*/
 
 	// Set initial render / sight range to 150 (from the player).
 	renderRange = 150.f;
@@ -253,7 +279,9 @@ void Level1Scene::Update(const double& dt)
         ofstream leaderBoardFile;
         leaderBoardFile.open("res/Leaderboard.txt");
         leaderBoardFile << to_string(timerText->GetCurrentTime()) << endl;
-        Engine::ChangeScene((Scene*)&level2);
+
+		UnLoad();
+        Engine::ChangeScene(&levelSelect);
     }
 
     // If the player touches the weapon powerup, give the player a weapon and remove the powerup shape from the game, to prevent multiple weapons being picked up.
@@ -340,7 +368,7 @@ void Level1Scene::Update(const double& dt)
 		player->get_components<PowerupManagerComponent>()[0]->IsMapPowerupActive() ? renderRange = 450.f : renderRange = 150.f;
 
 
-		if ((anEnemy->getPosition() - player->getPosition()).length() >= 50)
+		/*if ((anEnemy->getPosition() - player->getPosition()).length() >= 50)
 		{
 			auto relative_pos = Vector2i(player->getPosition()) - Vector2i(ls::getOffset());
 			auto tile_coord = relative_pos / (int)ls::getTileSize();
@@ -351,7 +379,7 @@ void Level1Scene::Update(const double& dt)
 				auto path = pathFind(char_tile, tile_coord);
 				ai->setPath(path);
 			}
-		}
+		}*/
 
 
 		Scene::Update(dt);

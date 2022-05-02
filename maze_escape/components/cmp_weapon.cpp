@@ -70,7 +70,7 @@ void PlayerWeaponComponent::Attack() const
     auto shape = projectile->addComponent<ShapeComponent>();
     shape->setShape<sf::RectangleShape>(sf::Vector2f(4.f, 4.f));
     shape->getShape().setFillColor(sf::Color(100, 100, 100, 255));
-    shape->getShape().setOutlineColor(Color::Black);
+    shape->getShape().setOutlineColor(Color(100, 100, 100, 255));
     shape->getShape().setOutlineThickness(2);
     shape->getShape().setOrigin(Vector2f(2.f, 2.f));
 
