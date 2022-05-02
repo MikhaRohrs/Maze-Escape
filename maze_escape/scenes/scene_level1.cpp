@@ -7,14 +7,21 @@
 #include "../components/cmp_timer.h"
 #include "../components/cmp_weapon.h"
 #include "../components/cmp_powerup_handler.h"
+#include "../components/cmp_steering.h"
+#include "../components/cmp_pathfinding.h"
 #include "../game.h"
 #include <LevelSystem.h>
+#include "../enemy_ai/aStarPathfinding.h"
 #include <iostream>
 #include <thread>
 #include "SFML/Window/Keyboard.hpp"
 
 using namespace std;
 using namespace sf;
+
+
+shared_ptr<Entity> anEnemy;
+shared_ptr<PathfindingComponent> ai;
 
 
 // Player entity
@@ -179,6 +186,17 @@ void Level1Scene::Load() {
 		ammoPowerupShapes.push_back(ammoPowerupShape);
 	}
 
+	anEnemy = makeEntity();
+	anEnemy->setPosition(Vector2f(player->getPosition() + Vector2f(50, 50)));
+	auto s = anEnemy->addComponent<ShapeComponent>();
+	s->setShape<RectangleShape>(Vector2f(10.f, 10.f));
+	s->getShape().setFillColor(Color::Cyan);
+
+	auto path = pathFind(Vector2i(0, 1),
+		Vector2i(player->getPosition()));
+	ai = anEnemy->addComponent<PathfindingComponent>();
+	auto w = anEnemy->addComponent<SteeringComponent>();
+
 	// Set initial render / sight range to 150 (from the player).
 	renderRange = 150.f;
 
@@ -314,11 +332,27 @@ void Level1Scene::Update(const double& dt)
 					ammoPowerups[i]->setForDelete();
 					ammoPowerups.erase(ammoPowerups.begin() + i);
 					ammoPowerupShapes.erase(ammoPowerupShapes.begin() + i);
+					ammoPowerupShapes.erase(ammoPowerupShapes.begin() + i);
 				}
 			}
 		}
 
 		player->get_components<PowerupManagerComponent>()[0]->IsMapPowerupActive() ? renderRange = 450.f : renderRange = 150.f;
+
+
+		if ((anEnemy->getPosition() - player->getPosition()).length() >= 50)
+		{
+			auto relative_pos = Vector2i(player->getPosition()) - Vector2i(ls::getOffset());
+			auto tile_coord = relative_pos / (int)ls::getTileSize();
+			if (ls::getTile(Vector2ul(tile_coord)) != ls::WALL)
+			{
+				auto char_relative = anEnemy->getPosition() - ls::getOffset();
+				auto char_tile = Vector2i(char_relative / ls::getTileSize());
+				auto path = pathFind(char_tile, tile_coord);
+				ai->setPath(path);
+			}
+		}
+
 
 		Scene::Update(dt);
 
